@@ -27,7 +27,7 @@ public class FoodService {
         }
     }
 
-    public Optional<Food> find(@NonNull String id) {
+    public Optional<Food> find(@NonNull Long id) {
         return foodRepository.findById(id);
     }
 }

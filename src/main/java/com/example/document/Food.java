@@ -9,16 +9,18 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Entity;
 import javax.validation.constraints.NotBlank;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Serdeable
-@MappedEntity
+@Entity
 public class Food {
+    @javax.persistence.Id
     @Id
     @GeneratedValue
-    private String id;
+    private Long id;
 
     @NonNull
     @NotBlank
@@ -28,5 +30,4 @@ public class Food {
     private String catagoryId;
 
     private double price;
-
 }

@@ -26,8 +26,5 @@ public class BillInfoService {
         }
     }
 
-    public Optional<BillInfo> find(@NonNull String id) {
-        return billInfoRepository.findById(id);
-    }
 
 }

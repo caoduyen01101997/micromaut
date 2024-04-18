@@ -7,4 +7,15 @@ netty:
       max-order: 3
 mongodb:
     uri: mongodb://localhost:27017/coffee
+datasources:
+  default:
+    url: jdbc:postgresql://localhost:5432/postgres
+    driverClassName: org.postgresql.Driver
+    username: postgres
+    password: mysecretpassword
+jpa:
+  default:
+    entity-scan:
+      packages: 'com.example'
+
 

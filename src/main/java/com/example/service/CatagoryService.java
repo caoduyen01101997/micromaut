@@ -26,7 +26,7 @@ public class CatagoryService {
         }
     }
 
-    public Optional<Catagory> find(@NonNull String id) {
+    public Optional<Catagory> find(@NonNull Long id) {
         return fruitRepository.findById(id);
     }
 

@@ -1,7 +1,9 @@
 package com.example.controller;
 
 import com.example.document.Table;
+import com.example.document.User;
 import com.example.service.TableService;
+import com.example.service.UserService;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.*;
@@ -11,37 +13,35 @@ import jakarta.inject.Inject;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.util.List;
 import java.util.Optional;
 
-@Controller("/tables")
+@Controller("/account")
 @ExecuteOn(TaskExecutors.IO)
-public class TableController {
+public class UserController {
     @Inject
-    private  TableService tableService;
+    private UserService userService;
 
 
     @Get
-    Iterable<Table> list() {
+    Iterable<User> list() {
 
-        return tableService.list();
+        return userService.list();
     }
 
     @Post
     @Status(HttpStatus.CREATED)
-    Table save(@NonNull @NotNull @Valid Table table) {
+    User save(@NonNull @NotNull @Valid User user) {
 
-        return tableService.save(table);
+        return userService.save(user);
     }
 
     @Put
-    Table update(@NonNull @NotNull @Valid Table table) {
-        return tableService.save(table);
+    User update(@NonNull @NotNull @Valid User user) {
+        return userService.save(user);
     }
 
     @Get("/{id}")
-    Optional<Table> find(@PathVariable Long id) {
-        return tableService.find(id);
+    Optional<User> find(@PathVariable Long id) {
+        return userService.find(id);
     }
-
 }

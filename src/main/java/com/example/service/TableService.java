@@ -26,7 +26,7 @@ public class TableService {
         }
     }
 
-    public Optional<Table> find(@NonNull String id) {
+    public Optional<Table> find(@NonNull Long id) {
         return tableRepository.findById(id);
     }
 }

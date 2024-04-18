@@ -23,8 +23,4 @@ public class BillService {
             return billRepository.update(bill);
         }
     }
-
-    public Optional<Bill> find(@NonNull String id) {
-        return billRepository.findById(id);
-    }
 }

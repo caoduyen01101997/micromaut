@@ -9,16 +9,18 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Entity;
 import javax.validation.constraints.NotBlank;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Serdeable
-@MappedEntity
+@Entity
 public class BillInfo {
+    @javax.persistence.Id
     @Id
     @GeneratedValue
-    private String id;
+    private Long id;
     @NonNull
     @NotBlank
     private String order;
@@ -27,4 +29,11 @@ public class BillInfo {
     private String name;
 
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getId() {
+        return id;
+    }
 }

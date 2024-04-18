@@ -8,6 +8,7 @@ group = "com.example"
 
 repositories {
     mavenCentral()
+    jcenter()
 }
 
 dependencies {
@@ -22,9 +23,19 @@ dependencies {
     annotationProcessor("io.micronaut.data:micronaut-data-document-processor")
     implementation("io.micronaut.mongodb:micronaut-mongo-reactive")
     implementation("io.micronaut.data:micronaut-data-mongodb")
+    implementation("io.micronaut.sql:micronaut-hibernate-jpa")
+    implementation("io.micronaut.data:micronaut-data-tx-hibernate")
+    implementation("io.micronaut.sql:micronaut-jdbc-hikari")
+    implementation("io.micronaut.data:micronaut-data-hibernate-jpa")
+    implementation("io.micronaut.data:micronaut-data-jdbc")
+    implementation("io.vertx:vertx-pg-client")
+    runtimeOnly("org.postgresql:postgresql")
+    runtimeOnly("com.h2database:h2")
     runtimeOnly("org.mongodb:mongodb-driver-sync")
     compileOnly 'org.projectlombok:lombok:1.16.20'
     annotationProcessor "org.projectlombok:lombok:1.16.20"
+    annotationProcessor("io.micronaut.data:micronaut-data-processor")
+    annotationProcessor("io.micronaut.data:micronaut-data-document-processor")
 
 
 }

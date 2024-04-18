@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Entity;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
@@ -17,11 +18,12 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Serdeable
-@MappedEntity
+@Entity
 public class Table implements Serializable {
+    @javax.persistence.Id
     @Id
     @GeneratedValue
-    private String id;
+    private Long id;
 
     @NonNull
     @NotBlank
@@ -32,6 +34,4 @@ public class Table implements Serializable {
     private String description;
     @Nullable
     private int orderStatus;
-//    @Nullable
-//    private String locationId;
 }

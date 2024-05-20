@@ -11,17 +11,30 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.validation.constraints.NotBlank;
+import java.util.Date;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Serdeable
-@Entity
+@Entity(name = "blog")
 public class Blog {
     @javax.persistence.Id
     @Id
     @GeneratedValue
     private Long id;
-    @NonNull
-    @NotBlank
-    private String order;
+
+    private String author;
+
+    private Date createdDate;
+
+    private Date updatedDate;
+
+    private String description;
+
+    private String content;
+
+    private int star;
+
+    private int timeToRead;
 }

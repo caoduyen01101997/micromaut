@@ -3,6 +3,7 @@ package com.example.controller;
 import com.example.document.Blog;
 import com.example.document.User;
 import com.example.service.BlogService;
+import com.example.service.UserService;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.*;
@@ -17,7 +18,6 @@ import java.util.Optional;
 @Controller("/blog")
 @ExecuteOn(TaskExecutors.IO)
 public class BlogController {
-
     @Inject
     private BlogService blogService;
 

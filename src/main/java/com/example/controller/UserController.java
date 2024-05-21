@@ -1,8 +1,6 @@
 package com.example.controller;
 
-import com.example.document.Table;
 import com.example.document.User;
-import com.example.service.TableService;
 import com.example.service.UserService;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.http.HttpStatus;

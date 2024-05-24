@@ -1,6 +1,6 @@
 plugins {
     id("com.github.johnrengelman.shadow") version "7.1.2"
-    id("io.micronaut.application") version "3.6.3"
+    id("io.micronaut.application") version "3.7.4"
 }
 
 version = "0.1"
@@ -13,6 +13,7 @@ repositories {
 
 dependencies {
     annotationProcessor("io.micronaut:micronaut-http-validation")
+    implementation("io.micronaut:micronaut-runtime")
     implementation("io.micronaut:micronaut-http-client")
     implementation("io.micronaut:micronaut-jackson-databind")
     implementation("jakarta.annotation:jakarta.annotation-api")
@@ -51,11 +52,18 @@ java {
 
 graalvmNative.toolchainDetection = false
 micronaut {
+    version '3.7.4'
     runtime("netty")
     testRuntime("junit5")
     processing {
         incremental(true)
         annotations("com.example.*")
+    }
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'com.example.Application'
     }
 }
 

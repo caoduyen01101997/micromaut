@@ -28,13 +28,13 @@ public class UserController {
 
     @Post
     @Status(HttpStatus.CREATED)
-    User save(@NonNull @NotNull @Valid User user) {
+    User save( @Valid User user) {
 
         return userService.save(user);
     }
 
     @Put
-    User update(@NonNull @NotNull @Valid User user) {
+    User update(@Valid User user) {
         return userService.save(user);
     }
 

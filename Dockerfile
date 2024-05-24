@@ -6,7 +6,7 @@ WORKDIR /app
 COPY build.gradle settings.gradle /app/
 COPY src /app/src
 
-RUN gradle build --no-daemon
+RUN gradle shadowJar --no-daemon
 
 # Stage 2: Create the final image
 FROM openjdk:11-jre-slim

@@ -20,5 +20,8 @@ jpa:
   default:
     entity-scan:
       packages: 'com.example'
-
+logger:
+  levels:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql: TRACE
 

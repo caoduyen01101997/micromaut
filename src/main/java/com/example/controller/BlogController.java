@@ -13,6 +13,7 @@ import jakarta.inject.Inject;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.Optional;
 
 @Controller("/blog")
@@ -23,7 +24,7 @@ public class BlogController {
 
 
     @Get
-    Iterable<Blog> list() {
+    List<Blog> list() {
 
         return blogService.list();
     }

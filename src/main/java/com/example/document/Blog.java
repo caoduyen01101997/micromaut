@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotBlank;
 import java.util.Date;
@@ -25,9 +26,9 @@ public class Blog {
     private Long id;
 
     private String author;
-
+    @Column(name = "createddate")
     private Date createdDate;
-
+    @Column(name = "updatedate")
     private Date updatedDate;
 
     private String description;
@@ -35,6 +36,6 @@ public class Blog {
     private String content;
 
     private int star;
-
+    @Column(name = "timetoread")
     private int timeToRead;
 }

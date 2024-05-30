@@ -9,7 +9,7 @@ COPY src /app/src
 RUN gradle shadowJar --no-daemon
 
 # Stage 2: Create the final image
-FROM openjdk:11-jre-slim
+FROM openjdk:11.0.16-jre-slim-buster
 
 WORKDIR /app
 

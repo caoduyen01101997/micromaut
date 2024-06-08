@@ -5,6 +5,8 @@ import com.example.document.User;
 import com.example.service.BlogService;
 import com.example.service.UserService;
 import io.micronaut.core.annotation.NonNull;
+import io.micronaut.data.model.Page;
+import io.micronaut.data.model.Pageable;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
@@ -24,9 +26,9 @@ public class BlogController {
 
 
     @Get
-    List<Blog> list() {
-
-        return blogService.list();
+    public Page<Blog> list(@QueryValue("page") int page, @QueryValue("size") int size) {
+        Pageable pageable = Pageable.from(page, size);
+        return blogService.list(pageable);
     }
 
     @Post
@@ -44,5 +46,10 @@ public class BlogController {
     @Get("/{id}")
     Optional<Blog> find(@PathVariable Long id) {
         return blogService.find(id);
+    }
+
+    @Delete("/{id}")
+    int delete(@PathVariable Long id) {
+        return blogService.delete(id);
     }
 }

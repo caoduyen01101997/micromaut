@@ -1,15 +1,15 @@
 package com.example.service;
 
 import com.example.document.Blog;
-import com.example.document.User;
+
 import com.example.repository.BlogRepository;
-import com.example.repository.UserRepository;
 import io.micronaut.core.annotation.NonNull;
+import io.micronaut.data.model.Page;
+import io.micronaut.data.model.Pageable;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -17,8 +17,8 @@ import java.util.UUID;
 public class BlogService {
     @Inject
     private BlogRepository blogRepository;
-    public List<Blog> list() {
-        return blogRepository.findAll();
+    public Page<Blog> list(Pageable pageable) {
+        return blogRepository.findAll(pageable);
     }
 
     public Blog save(Blog blog) {
@@ -48,5 +48,16 @@ public class BlogService {
         Long id = Long.parseLong(uuidStr.substring(0, 15), 16);
 
         return id;
+    }
+
+    public int  delete(Long id) {
+        blogRepository.deleteById(id);
+
+        Optional<Blog> blog = blogRepository.findById(id);
+        if (blog.isEmpty()) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
 }

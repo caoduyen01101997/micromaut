@@ -12,5 +12,4 @@ import java.util.List;
 
 @Repository
 public interface CatagoryRepository extends JpaRepository<Catagory,Long> {
-    List<Catagory> findByNameInList(String name);
 }

@@ -15,8 +15,6 @@ import lombok.NoArgsConstructor;
 @Serdeable
 @Entity(name = "blog")
 public class Blog implements Serializable {
-
-
     @Id
     @NotNull
     private  Long id;
@@ -36,7 +34,6 @@ public class Blog implements Serializable {
     private String content;
 
     private int star;
-
     @Column(name = "timetoread")
     private int timeToRead;
 

@@ -16,6 +16,9 @@ datasources:
     driverClassName: org.postgresql.Driver
     username: myuser
     password: pass123
+    properties:
+      hibernate:
+        physical_naming_strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
 jpa:
   default:
     entity-scan:

@@ -20,10 +20,8 @@ dependencies {
     runtimeOnly("ch.qos.logback:logback-classic")
     implementation("io.micronaut:micronaut-validation")
     implementation 'javax.annotation:javax.annotation-api'
-    annotationProcessor("io.micronaut:micronaut-inject-java")
     testImplementation("io.micronaut.test:micronaut-test-junit5")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
-    annotationProcessor("io.micronaut.data:micronaut-data-document-processor")
     implementation("io.micronaut.mongodb:micronaut-mongo-reactive")
     implementation("io.micronaut.data:micronaut-data-mongodb")
     implementation("io.micronaut.sql:micronaut-hibernate-jpa")
@@ -35,10 +33,12 @@ dependencies {
     runtimeOnly("org.postgresql:postgresql")
     runtimeOnly("com.h2database:h2")
     runtimeOnly("org.mongodb:mongodb-driver-sync")
-    compileOnly 'org.projectlombok:lombok:1.16.20'
-    annotationProcessor "org.projectlombok:lombok:1.16.20"
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor "org.projectlombok:lombok"
     annotationProcessor("io.micronaut.data:micronaut-data-processor")
     annotationProcessor("io.micronaut.data:micronaut-data-document-processor")
+    annotationProcessor("io.micronaut:micronaut-inject-java")
+    annotationProcessor("io.micronaut.openapi:micronaut-openapi")
 
 
 }

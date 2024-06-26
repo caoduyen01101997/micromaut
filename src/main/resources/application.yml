@@ -4,6 +4,22 @@ micronaut:
     name: micromaut
   server:
     port: 8080
+    cors:
+      enabled: true
+      configurations:
+        default:
+          allowedOrigins: 
+            - http://localhost:4200
+          allowedMethods: 
+            - GET
+            - POST
+            - PUT
+            - DELETE
+          allowedHeaders: 
+            - '*'
+          exposedHeaders: 
+            - '*'
+          allowCredentials: true
 netty:
   default:
     allocator:

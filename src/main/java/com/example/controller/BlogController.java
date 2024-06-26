@@ -33,8 +33,7 @@ public class BlogController {
 
     @Post
     @Status(HttpStatus.CREATED)
-    Blog save(@NonNull @NotNull @Valid Blog user) {
-
+    Blog save(Blog user) {
         return blogService.save(user);
     }
 

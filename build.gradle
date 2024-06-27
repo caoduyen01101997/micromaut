@@ -10,6 +10,9 @@ repositories {
     mavenCentral()
     jcenter()
 }
+ext {
+    micronautVersion = '3.7.4'
+}
 
 dependencies {
     annotationProcessor("io.micronaut:micronaut-http-validation")
@@ -39,6 +42,10 @@ dependencies {
     annotationProcessor("io.micronaut.data:micronaut-data-document-processor")
     annotationProcessor("io.micronaut:micronaut-inject-java")
     annotationProcessor("io.micronaut.openapi:micronaut-openapi")
+    implementation "io.micronaut:micronaut-security-jwt:2.5.0"
+    implementation 'io.micronaut:micronaut-security'
+    runtimeOnly 'io.micronaut.reactor:micronaut-reactor'
+    implementation("io.micronaut:micronaut-graal")
 
 
 }

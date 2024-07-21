@@ -1,8 +1,6 @@
 package com.example.service;
 
-import com.example.document.Blog;
 import com.example.document.TimeWaste;
-import com.example.repository.BlogRepository;
 import com.example.repository.TimeWasteRepository;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.data.model.Page;

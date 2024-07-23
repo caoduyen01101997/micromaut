@@ -6,11 +6,13 @@ import io.micronaut.core.annotation.NonNull;
 import io.micronaut.data.model.Page;
 import io.micronaut.data.model.Pageable;
 import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 
 import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
 
+@Singleton
 public class TimeWasteService {
 
     @Inject

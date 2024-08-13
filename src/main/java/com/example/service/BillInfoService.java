@@ -2,13 +2,8 @@ package com.example.service;
 
 import com.example.document.BillInfo;
 import com.example.repository.BillInfoRepository;
-import com.example.repository.BillRepository;
-import com.example.repository.CatagoryRepository;
-import io.micronaut.core.annotation.NonNull;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
-
-import java.util.Optional;
 
 @Singleton
 public class BillInfoService {

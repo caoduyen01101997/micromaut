@@ -1,8 +1,6 @@
 package com.example.service;
 
-import com.example.document.Food;
 import com.example.document.Table;
-import com.example.repository.FoodRepository;
 import com.example.repository.TableRepository;
 import io.micronaut.core.annotation.NonNull;
 import jakarta.inject.Inject;

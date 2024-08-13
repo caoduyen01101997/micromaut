@@ -2,11 +2,7 @@ package com.example.service;
 
 import com.example.document.Bill;
 import com.example.repository.BillRepository;
-import io.micronaut.core.annotation.NonNull;
-import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
-
-import java.util.Optional;
 
 @Singleton
 

@@ -1,7 +1,5 @@
 package com.example.repository;
 
-import java.util.Optional;
-import java.util.List; // Add this import statement
 
 import com.example.document.Blog;
 

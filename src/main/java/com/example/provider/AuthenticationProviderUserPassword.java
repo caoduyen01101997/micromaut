@@ -1,14 +1,11 @@
 package com.example.provider;
 
-import io.micronaut.core.annotation.NonNull;
-import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.security.authentication.*;
 import jakarta.inject.Singleton;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
 
-import java.util.ArrayList;
 
 @Singleton
 public class AuthenticationProviderUserPassword implements AuthenticationProvider {

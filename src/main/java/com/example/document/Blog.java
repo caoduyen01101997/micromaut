@@ -16,16 +16,15 @@ import lombok.NoArgsConstructor;
 @Entity(name = "blog")
 public class Blog implements Serializable {
     @Id
-    @NotNull
     private  Long id;
 
     private String author;
 
-    @Column(name = "createddate")
+    @Column(name = "created_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate;
 
-    @Column(name = "updatedate")
+    @Column(name = "updated_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedDate;
 
@@ -34,7 +33,7 @@ public class Blog implements Serializable {
     private String content;
 
     private int star;
-    @Column(name = "timetoread")
+    @Column(name = "time_to_read")
     private int timeToRead;
 
     public Blog(Long id) {

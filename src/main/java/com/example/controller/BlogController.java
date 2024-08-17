@@ -1,9 +1,7 @@
 package com.example.controller;
 
 import com.example.document.Blog;
-import com.example.document.User;
 import com.example.service.BlogService;
-import com.example.service.UserService;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.data.model.Page;
 import io.micronaut.data.model.Pageable;
@@ -15,10 +13,13 @@ import jakarta.inject.Inject;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.util.List;
 import java.util.Optional;
 
+import io.micronaut.security.annotation.Secured;
+import io.micronaut.security.rules.SecurityRule;
+
 @Controller("/blog")
+@Secured(SecurityRule.IS_ANONYMOUS)
 @ExecuteOn(TaskExecutors.IO)
 public class BlogController {
     @Inject

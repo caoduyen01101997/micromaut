@@ -45,7 +45,7 @@ public class BlogService {
         String uuidStr = uuid.toString().replace("-", "");
 
         // Convert the first 15 characters of the UUID to a long
-        Long id = Long.parseLong(uuidStr.substring(0, 15), 16);
+        Long id = Long.parseLong(uuidStr.substring(0, 10), 16);
 
         return id;
     }

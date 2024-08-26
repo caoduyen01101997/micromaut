@@ -21,13 +21,16 @@ public class TimeWasteService {
         return timeWasteRepository.findAll(pageable);
     }
 
-    public TimeWaste save(TimeWaste blog) {
-        if (blog.getId() == null) {
-            blog.setId(generateId());
-            return timeWasteRepository.save(blog);
+    public TimeWaste save(TimeWaste timeWaste) {
+        if (timeWaste.getId() == null) {
+            timeWaste.setId(generateId());
+            timeWaste.setUserId(Long.parseLong("1234"));
+            timeWaste.setCreatedDate(new Date());
+            timeWaste.setUpdatedDate(new Date());
+            return timeWasteRepository.save(timeWaste);
         } else {
-            blog.setEndTime(new Date());
-            return timeWasteRepository.update(blog);
+            timeWaste.setEndTime(new Date());
+            return timeWasteRepository.update(timeWaste);
         }
     }
 
@@ -43,7 +46,7 @@ public class TimeWasteService {
         String uuidStr = uuid.toString().replace("-", "");
 
         // Convert the first 15 characters of the UUID to a long
-        Long id = Long.parseLong(uuidStr.substring(0, 15), 16);
+        Long id = Long.parseLong(uuidStr.substring(0, 10), 16);
 
         return id;
     }

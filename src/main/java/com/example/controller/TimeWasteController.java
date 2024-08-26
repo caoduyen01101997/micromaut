@@ -16,9 +16,12 @@ import io.micronaut.http.annotation.Put;
 import io.micronaut.http.annotation.Status;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
+import io.micronaut.security.annotation.Secured;
+import io.micronaut.security.rules.SecurityRule;
 import jakarta.inject.Inject;
 
 @Controller("/time-waste")
+@Secured(SecurityRule.IS_ANONYMOUS)
 @ExecuteOn(TaskExecutors.IO)
 public class TimeWasteController {
      @Inject
@@ -32,8 +35,8 @@ public class TimeWasteController {
 
     @Post
     @Status(HttpStatus.CREATED)
-    TimeWaste save(TimeWaste user) {
-        return timeWasteService.save(user);
+    TimeWaste save(TimeWaste timeWaste) {
+        return timeWasteService.save(timeWaste);
     }
 
     @Put

@@ -1,16 +1,9 @@
 package com.example.document;
 
-import io.micronaut.data.annotation.GeneratedValue;
+import javax.persistence.*;
 import io.micronaut.serde.annotation.Serdeable;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import java.util.Date;
 
 @AllArgsConstructor
@@ -18,13 +11,11 @@ import java.util.Date;
 @Serdeable
 @Entity(name = "timewaste")
 public class TimeWaste {
-    @javax.persistence.Id
-    @io.micronaut.data.annotation.Id
-    @GeneratedValue
+    @Id
     private Long id;
 
     @Column(name = "user_id")
-    private Long userId;
+    private Long userId = 1L;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_date")
@@ -32,6 +23,10 @@ public class TimeWaste {
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "updated_date")
+    private Date updatedDate;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "start_time")
     private Date startTime;
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -39,7 +34,7 @@ public class TimeWaste {
     private Date endTime;
 
     @Column(name = "duration")
-    private Date duration;
+    private int duration = 1;
 
     public Long getId() {
         return id;
@@ -65,6 +60,14 @@ public class TimeWaste {
         this.createdDate = createdDate;
     }
 
+    public Date getUpdatedDate() {
+        return updatedDate;
+    }
+
+    public void setUpdatedDate(Date updatedDate) {
+        this.updatedDate = updatedDate;
+    }
+
     public Date getStartTime() {
         return startTime;
     }
@@ -81,11 +84,11 @@ public class TimeWaste {
         this.endTime = endTime;
     }
 
-    public Date getDuration() {
+    public int getDuration() {
         return duration;
     }
 
-    public void setDuration(Date duration) {
+    public void setDuration(int duration) {
         this.duration = duration;
     }
 }

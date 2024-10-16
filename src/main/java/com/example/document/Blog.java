@@ -101,6 +101,10 @@ public class Blog implements Serializable {
         return star;
     }
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private Long userId;
+
     public void setStar(int star) {
         this.star = star;
     }

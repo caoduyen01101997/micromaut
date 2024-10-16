@@ -1,32 +1,42 @@
 package com.example.document;
 
 import io.micronaut.data.annotation.GeneratedValue;
-import io.micronaut.data.annotation.Id;
 import io.micronaut.serde.annotation.Serdeable;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.NoArgsConstructor;
+
+import java.util.Date;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Serdeable
 @Entity(name = "my_user")
 public class User {
-    @javax.persistence.Id
     @Id
     @GeneratedValue
     private Long id;
 
+    @Column(name = "username")
     private String username;
 
+    @Column(name = "password")
     private String password;
 
+    @Column(name = "name")
     private String name;
 
-    @Builder.Default
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "createaccountdate")
+    private Date createdDate;
+
+    @Column(name = "role")
     private String role = "VIEW";
 
 
@@ -68,5 +78,13 @@ public class User {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public Date getCreatedDate() {
+        return this.createdDate;
+    }
+
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
     }
 }

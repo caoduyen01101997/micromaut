@@ -2,18 +2,19 @@ package com.example.controller;
 
 import com.example.document.User;
 import com.example.service.UserService;
-import io.micronaut.core.annotation.NonNull;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
+import io.micronaut.security.annotation.Secured;
+import io.micronaut.security.rules.SecurityRule;
 import jakarta.inject.Inject;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.util.Optional;
 
 @Controller("/account")
+@Secured(SecurityRule.IS_ANONYMOUS)
 @ExecuteOn(TaskExecutors.IO)
 public class UserController {
     @Inject
@@ -28,13 +29,13 @@ public class UserController {
 
     @Post
     @Status(HttpStatus.CREATED)
-    User save( @Valid User user) {
+    User save( User user) {
 
         return userService.save(user);
     }
 
     @Put
-    User update(@Valid User user) {
+    User update( User user) {
         return userService.save(user);
     }
 

@@ -25,13 +25,13 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     }
 
     @Override
-    public Publisher<AuthenticationResponse> authenticate(HttpRequest<?> httpRequest, AuthenticationRequest<?, ?> authenticationRequest) {
+    public Publisher authenticate(HttpRequest<?> httpRequest, AuthenticationRequest<?, ?> authenticationRequest) {
         String username = authenticationRequest.getIdentity().toString();
         String password = authenticationRequest.getSecret().toString();
 
         Optional<User> user = userRepository.findByUsername(username);
         if (user.isPresent() && user.get().getPassword().equals(password)) {
-            return Mono.just((AuthenticationResponse) new CustomUserDetails(username, Collections.singletonList(user.get().getRole())));
+            return Mono.just(new CustomUserDetails(username, Collections.singletonList(user.get().getRole())));
         }
         return Mono.just(new AuthenticationFailed());
     }

@@ -21,7 +21,7 @@ import io.micronaut.security.rules.SecurityRule;
 import jakarta.inject.Inject;
 
 @Controller("/time-waste")
-@Secured(SecurityRule.IS_ANONYMOUS)
+@Secured(SecurityRule.IS_AUTHENTICATED)
 @ExecuteOn(TaskExecutors.IO)
 public class TimeWasteController {
      @Inject

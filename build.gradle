@@ -40,11 +40,8 @@ dependencies {
     annotationProcessor("io.micronaut.data:micronaut-data-document-processor")
     annotationProcessor("io.micronaut:micronaut-inject-java")
     annotationProcessor("io.micronaut.openapi:micronaut-openapi")
-//    annotationProcessor("io.micronaut.security:micronaut-security-annotations")
-    // https://mvnrepository.com/artifact/io.micronaut.security/micronaut-security
     implementation("io.micronaut.security:micronaut-security-jwt")
     testImplementation("io.micronaut.test:micronaut-test-junit5")
-//    runtimeOnly 'io.micronaut.security:micronaut-security-oauth2'
     runtimeOnly 'io.micronaut.reactor:micronaut-reactor'
     implementation("io.micronaut:micronaut-graal")
     implementation 'io.jsonwebtoken:jjwt:0.9.1'

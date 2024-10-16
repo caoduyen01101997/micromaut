@@ -33,6 +33,9 @@ public class TimeWaste {
     @Column(name = "end_time")
     private Date endTime;
 
+    @Column(name = "task_id")
+    private Date taskId;
+
     @Column(name = "duration")
     private int duration = 1;
 

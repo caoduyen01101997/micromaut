@@ -6,6 +6,7 @@ import com.example.document.Blog;
 import com.example.document.User;
 import com.example.repository.BlogRepository;
 import com.example.repository.UserRepository;
+import com.example.util.IdUtil;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.data.model.Page;
 import io.micronaut.data.model.Pageable;
@@ -30,6 +31,7 @@ public class BlogService {
     public Blog save(BlogDto blogDto) {
         User user = userRepository.findById(blogDto.getUserId()).orElseThrow(() -> null);
         Blog blog = BlogDto.toEntity(blogDto, user);
+        blog.setId(IdUtil.generateId());
         return blogRepository.save(blog);
     }
 

@@ -47,6 +47,12 @@ jpa:
   default:
     entity-scan:
       packages: 'com.example'
+    properties:
+      hibernate:
+        hbm2ddl:
+          auto: update
+        show_sql: true
+        format_sql: true
 logger:
   levels:
     org.hibernate.SQL: DEBUG

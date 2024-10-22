@@ -1,53 +1,45 @@
 package com.example.service;
 
+import com.example.DTO.BlogDto;
 import com.example.document.Blog;
 
+import com.example.document.User;
 import com.example.repository.BlogRepository;
+import com.example.repository.UserRepository;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.data.model.Page;
 import io.micronaut.data.model.Pageable;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
+import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.Optional;
-import java.util.UUID;
 
 @Singleton
 public class BlogService {
     @Inject
     private BlogRepository blogRepository;
+    @Inject
+    private UserRepository userRepository;
     public Page<Blog> list(Pageable pageable) {
         return blogRepository.findAll(pageable);
     }
 
-    public Blog save(Blog blog) {
-        if (blog.getId() == null) {
-            blog.setId(generateId());
-            blog.setCreatedDate(new Date());
-            blog.setUpdatedDate(new Date());
-            return blogRepository.save(blog);
-        } else {
-            blog.setUpdatedDate(new Date());
-            return blogRepository.update(blog);
-        }
+    @Transactional
+    public Blog save(BlogDto blogDto) {
+        User user = userRepository.findById(blogDto.getUserId()).orElseThrow(() -> null);
+        Blog blog = BlogDto.toEntity(blogDto, user);
+        return blogRepository.save(blog);
+    }
+
+    public Blog update(Blog blog) {
+        blog.setUpdatedDate(new Date());
+        return blogRepository.update(blog);
     }
 
     public Optional<Blog> find(@NonNull Long id) {
         return blogRepository.findById(id);
-    }
-
-    private Long generateId() {
-        // Generate a random UUID
-        UUID uuid = UUID.randomUUID();
-
-        // Convert the UUID to a string and remove the hyphens
-        String uuidStr = uuid.toString().replace("-", "");
-
-        // Convert the first 15 characters of the UUID to a long
-        Long id = Long.parseLong(uuidStr.substring(0, 10), 16);
-
-        return id;
     }
 
     public int  delete(Long id) {

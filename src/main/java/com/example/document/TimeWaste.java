@@ -1,14 +1,12 @@
 package com.example.document;
 
 import javax.persistence.*;
-import io.micronaut.serde.annotation.Serdeable;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import java.util.Date;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Serdeable
 @Entity(name = "timewaste")
 public class TimeWaste {
     @Id

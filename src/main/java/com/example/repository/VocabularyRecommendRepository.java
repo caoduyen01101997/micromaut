@@ -1,9 +1,10 @@
 package com.example.repository;
 
-import com.example.document.Table;
+import com.example.document.Vocabulary;
 import io.micronaut.data.annotation.Repository;
 import io.micronaut.data.jpa.repository.JpaRepository;
 
 @Repository
-public interface TableRepository extends JpaRepository<Table, Long> {
+public interface VocabularyRecommendRepository extends JpaRepository<Vocabulary, Long> {
 }
+

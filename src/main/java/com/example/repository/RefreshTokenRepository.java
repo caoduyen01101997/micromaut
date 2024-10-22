@@ -2,7 +2,7 @@ package com.example.repository;
 
 import com.example.document.RefreshTokenEntity;
 import io.micronaut.core.annotation.NonNull;
-import io.micronaut.data.jdbc.annotation.JdbcRepository;
+import io.micronaut.data.annotation.Repository;
 import io.micronaut.data.repository.CrudRepository;
 
 import javax.transaction.Transactional;
@@ -13,7 +13,6 @@ import java.util.Optional;
 
 import static io.micronaut.data.model.query.builder.sql.Dialect.H2;
 
-@JdbcRepository(dialect = H2)
 public interface RefreshTokenRepository extends CrudRepository<RefreshTokenEntity, Long> {
 
     @Transactional

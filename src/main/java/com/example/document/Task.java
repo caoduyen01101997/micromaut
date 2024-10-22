@@ -9,11 +9,9 @@ import javax.persistence.TemporalType;
 
 import io.micronaut.data.annotation.GeneratedValue;
 import io.micronaut.data.annotation.Id;
-import io.micronaut.serde.annotation.Serdeable;
 import lombok.Data;
 
 @Data
-@Serdeable
 @Entity(name = "task")
 public class Task {
     @javax.persistence.Id

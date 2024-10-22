@@ -1,5 +1,6 @@
 package com.example.controller;
 
+import com.example.DTO.BlogDto;
 import com.example.document.Blog;
 import com.example.service.BlogService;
 import io.micronaut.core.annotation.NonNull;
@@ -34,13 +35,13 @@ public class BlogController {
 
     @Post
     @Status(HttpStatus.CREATED)
-    Blog save(Blog user) {
+    Blog save(BlogDto user) {
         return blogService.save(user);
     }
 
     @Put
     Blog update(@NonNull @NotNull @Valid Blog user) {
-        return blogService.save(user);
+        return blogService.update(user);
     }
 
     @Get("/{id}")

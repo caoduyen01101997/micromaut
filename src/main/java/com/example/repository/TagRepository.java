@@ -1,8 +1,9 @@
 package com.example.repository;
 
-import com.example.document.BillInfo;
+import com.example.document.Tag;
 import io.micronaut.data.annotation.Repository;
 import io.micronaut.data.jpa.repository.JpaRepository;
+
 @Repository
-public interface BillInfoRepository extends JpaRepository<BillInfo,Long> {
+public interface TagRepository extends JpaRepository<Tag, Long> {
 }

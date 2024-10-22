@@ -1,7 +1,6 @@
 package com.example.document;
 
 import io.micronaut.data.annotation.GeneratedValue;
-import io.micronaut.serde.annotation.Serdeable;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
@@ -16,7 +15,6 @@ import javax.persistence.TemporalType;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Serdeable
 @Entity(name = "my_user")
 public class User {
     @Id

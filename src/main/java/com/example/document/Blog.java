@@ -1,18 +1,18 @@
 package com.example.document;
 
 import javax.persistence.*;
+import javax.persistence.Table;
 
 import java.io.Serializable;
 import java.util.Date;
 
-import io.micronaut.serde.annotation.Serdeable;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Serdeable
-@Entity(name = "blog")
+@Entity
+@Table(name = "blog")
 public class Blog implements Serializable {
     @Id
     private  Long id;
@@ -35,6 +35,10 @@ public class Blog implements Serializable {
     @Column(name = "time_to_read")
     private int timeToRead;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
     public Blog(Long id) {
         this.id = id;
     }
@@ -47,6 +51,14 @@ public class Blog implements Serializable {
     @PreUpdate
     protected void onUpdate() {
         updatedDate = new Date();
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public Long getId() {
@@ -100,10 +112,6 @@ public class Blog implements Serializable {
     public int getStar() {
         return star;
     }
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private Long userId;
 
     public void setStar(int star) {
         this.star = star;

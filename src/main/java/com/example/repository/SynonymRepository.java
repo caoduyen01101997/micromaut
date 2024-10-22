@@ -1,8 +1,9 @@
 package com.example.repository;
 
-import com.example.document.Food;
+import com.example.document.Synonym;
 import io.micronaut.data.annotation.Repository;
 import io.micronaut.data.jpa.repository.JpaRepository;
+
 @Repository
-public interface FoodRepository extends JpaRepository<Food,Long> {
+public interface SynonymRepository extends JpaRepository<Synonym, Long> {
 }

@@ -1,8 +1,4 @@
 package com.example.service;
-
-import com.example.DTO.ExampleSentenceDTO;
-import com.example.DTO.SynonymDTO;
-import com.example.DTO.TagDTO;
 import com.example.DTO.VocabularyRecommendDTO;
 import com.example.document.ExampleSentence;
 import com.example.document.Synonym;
@@ -12,18 +8,19 @@ import com.example.repository.ExampleSentenceRepository;
 import com.example.repository.SynonymRepository;
 import com.example.repository.TagRepository;
 import com.example.repository.VocabularyRecommendRepository;
-import com.example.util.IdUtil;
-import io.micronaut.transaction.SynchronousTransactionManager;
-import io.micronaut.transaction.TransactionDefinition;
-import io.micronaut.transaction.TransactionStatus;
+
+import io.micronaut.transaction.annotation.TransactionalEventListener;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
-import javax.sql.DataSource;
-import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import javax.transaction.Transactional;
+
+import org.hibernate.Hibernate;
 
 @Singleton
 public class VocabularyRecommendService {
@@ -120,8 +117,25 @@ public Vocabulary createVocabulary(VocabularyRecommendDTO dto) {
     return savedVocabulary;
 }
 
-    public List<Vocabulary> getAllVocabulary() {
-        return (List<Vocabulary>) vocabularyRecommendRepository.findAll();
+    @Transactional
+    public List<VocabularyRecommendDTO> getAllVocabulary() {
+        List<VocabularyRecommendDTO> dtos = new ArrayList<>();
+        for (Vocabulary vocabulary : vocabularyRecommendRepository.getAllVocabulary()) {
+            VocabularyRecommendDTO dto = new VocabularyRecommendDTO();
+            // Hibernate.initialize(vocabulary.getSynonyms());
+            // Hibernate.initialize(vocabulary.getTags());
+            // Hibernate.initialize(vocabulary.getExampleSentences());
+            dto.setId(vocabulary.getId());
+            dto.setWord(vocabulary.getWord());
+            dto.setDefinition(vocabulary.getDefinition());
+            dto.setPartOfSpeech(vocabulary.getPartOfSpeech());
+            dto.setDifficultyLevel(vocabulary.getDifficultyLevel());
+            dto.setSynonyms(vocabulary.getSynonyms().stream().map(Synonym::getSynonym).collect(Collectors.toList()));
+            dto.setExampleSentences(vocabulary.getExampleSentences().stream().map(ExampleSentence::getSentence).collect(Collectors.toList()));
+            dto.setTags(vocabulary.getTags().stream().map(Tag::getTag).collect(Collectors.toList()));
+            dtos.add(dto);
+        }
+        return dtos;
     }
 
     public Optional<Vocabulary> getVocabularyById(Long id) {

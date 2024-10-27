@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller("/vocabulary")
-@Secured(SecurityRule.IS_ANONYMOUS)
+@Secured(SecurityRule.IS_AUTHENTICATED)
 public class VocabularyRecommendController {
 
     @Inject
@@ -26,7 +26,7 @@ public class VocabularyRecommendController {
     }
 
     @Get
-    public List<Vocabulary> getAllVocabulary() {
+    public List<VocabularyRecommendDTO> getAllVocabulary() {
         return vocabularyRecommendService.getAllVocabulary();
     }
 

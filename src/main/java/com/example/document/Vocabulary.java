@@ -4,6 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,14 +27,17 @@ public class Vocabulary {
 
     @OneToMany( cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "vocabulary_id")
+    @Fetch(FetchMode.SUBSELECT)
     private List<Synonym> synonyms = new ArrayList<>();
 
     @OneToMany( cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "vocabulary_id")
+    @Fetch(FetchMode.SUBSELECT)
     private List<ExampleSentence> exampleSentences = new ArrayList<>();
 
     @OneToMany( cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "vocabulary_id")
+    @Fetch(FetchMode.SUBSELECT)
     private List<Tag> tags = new ArrayList<>();
 
     public Long getId() {

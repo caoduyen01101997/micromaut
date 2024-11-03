@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
 
+import javax.transaction.Transactional;
+
 import com.example.document.Task;
 import com.example.repository.TaskRepository;
 
@@ -14,6 +16,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
 @Singleton
+@Transactional
 public class TaskService {
     @Inject
     private TaskRepository taskRepository;
@@ -24,7 +27,6 @@ public class TaskService {
 
     public Task save(Task task) {
         if (task.getId() == null) {
-            task.setId(generateId());
             task.setCreatedDate(new Date());
             return taskRepository.save(task);
         } else {
@@ -38,18 +40,6 @@ public class TaskService {
         return taskRepository.findById(id);
     }
 
-    private Long generateId() {
-        // Generate a random UUID
-        UUID uuid = UUID.randomUUID();
-
-        // Convert the UUID to a string and remove the hyphens
-        String uuidStr = uuid.toString().replace("-", "");
-
-        // Convert the first 15 characters of the UUID to a long
-        Long id = Long.parseLong(uuidStr.substring(0, 15), 16);
-
-        return id;
-    }
 
     public int  delete(Long id) {
         taskRepository.deleteById(id);

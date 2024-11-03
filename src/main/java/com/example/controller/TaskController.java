@@ -2,7 +2,9 @@ package com.example.controller;
 
 import java.util.Optional;
 
+import com.example.document.Task;
 import com.example.document.TimeWaste;
+import com.example.service.TaskService;
 import com.example.service.TimeWasteService;
 
 import io.micronaut.data.model.Page;
@@ -14,31 +16,40 @@ import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.Put;
 import io.micronaut.http.annotation.Status;
+import io.micronaut.security.annotation.Secured;
+import io.micronaut.security.rules.SecurityRule;
 import jakarta.inject.Inject;
 
 @Controller("/task")
+@Secured(SecurityRule.IS_AUTHENTICATED)
 public class TaskController {
     @Inject
-    private TimeWasteService timeWasteService;
+    private TaskService taskService;
 
     @Get
-    Page<TimeWaste> list(Pageable pageable) {
-        return timeWasteService.list(pageable);
+    Page<Task> list(Pageable pageable) {
+        return taskService.list(pageable);
     }
 
     @Post
     @Status(HttpStatus.CREATED)
-    TimeWaste save(TimeWaste user) {
-        return timeWasteService.save(user);
+    Task save(Task task) {
+        return taskService.save(task);
     }
 
     @Put
-    TimeWaste update(TimeWaste user) {
-        return timeWasteService.save(user);
+    Task update(Task task) {
+        return taskService.save(task);
     }
 
+    /**
+     * Get a task by ID.
+     *
+     * @param id the ID of the task
+     * @return the task or empty if no task is found
+     */
     @Get("/{id}")
-    Optional<TimeWaste> find(@PathVariable Long id) {
-        return timeWasteService.find(id);
+    Optional<Task> find(@PathVariable Long id) {
+        return taskService.find(id);
     }
 }

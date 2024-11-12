@@ -5,6 +5,8 @@ import io.micronaut.security.authentication.*;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import org.reactivestreams.Publisher;
@@ -26,19 +28,21 @@ public class AuthenticationProviderUserPassword implements AuthenticationProvide
         String username = authenticationRequest.getIdentity().toString();
         String password = authenticationRequest.getSecret().toString();
 
-        // Fetch the user from the database by username
         Optional<User> userOpt = userRepository.findByUsername(username);
 
-        // If user is found, verify password
         if (userOpt.isPresent()) {
             User user = userOpt.get();
             if (user.getPassword().equals(password)) {
-                return Mono.just(AuthenticationResponse.success(username));
+                Map<String, Object> claims = new HashMap<>();
+                claims.put("userId", user.getId());
+                claims.put("role", user.getRole());
+
+                // Use AuthenticationResponse.success to add claims directly
+                return Mono.just(AuthenticationResponse.success(username, claims));
             } else {
                 return Mono.just(AuthenticationResponse.failure(AuthenticationFailureReason.CREDENTIALS_DO_NOT_MATCH));
             }
         } else {
-            // User not found, authentication failed
             return Mono.just(AuthenticationResponse.failure(AuthenticationFailureReason.USER_NOT_FOUND));
         }
     }

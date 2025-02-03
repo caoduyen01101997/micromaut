@@ -12,8 +12,9 @@ public class TimeWaste {
     @Id
     private Long id;
 
-    @Column(name = "user_id")
-    private Long userId = 1L;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_date")
@@ -31,8 +32,9 @@ public class TimeWaste {
     @Column(name = "end_time")
     private Date endTime;
 
-    @Column(name = "task_id")
-    private Date taskId;
+    @ManyToOne
+    @JoinColumn(name = "task_id")
+    private Task task;
 
     @Column(name = "duration")
     private int duration = 1;
@@ -45,12 +47,12 @@ public class TimeWaste {
         this.id = id;
     }
 
-    public Long getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public Date getCreatedDate() {
@@ -91,5 +93,13 @@ public class TimeWaste {
 
     public void setDuration(int duration) {
         this.duration = duration;
+    }
+
+    public Task getTask() {
+        return this.task;
+    }
+
+    public void setTask(Task task) {
+        this.task = task;
     }
 }

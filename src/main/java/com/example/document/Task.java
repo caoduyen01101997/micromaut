@@ -4,8 +4,7 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
+import io.micronaut.data.annotation.GeneratedValue;
 
 import javax.persistence.Id;
 import javax.persistence.Temporal;
@@ -18,7 +17,7 @@ import lombok.Data;
 @Entity(name = "task")
 public class Task {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Long id;
 
     @Column(name = "name")

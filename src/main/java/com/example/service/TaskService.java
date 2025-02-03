@@ -8,6 +8,7 @@ import javax.transaction.Transactional;
 
 import com.example.document.Task;
 import com.example.repository.TaskRepository;
+import com.example.util.IdUtil;
 
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.data.model.Page;
@@ -27,6 +28,7 @@ public class TaskService {
 
     public Task save(Task task) {
         if (task.getId() == null) {
+            task.setId(IdUtil.generateId());
             task.setCreatedDate(new Date());
             return taskRepository.save(task);
         } else {

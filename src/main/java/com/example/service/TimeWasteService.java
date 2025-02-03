@@ -24,7 +24,6 @@ public class TimeWasteService {
     public TimeWaste save(TimeWaste timeWaste) {
         if (timeWaste.getId() == null) {
             timeWaste.setId(generateId());
-            timeWaste.setUserId(Long.parseLong("1234"));
             timeWaste.setCreatedDate(new Date());
             timeWaste.setUpdatedDate(new Date());
             return timeWasteRepository.save(timeWaste);

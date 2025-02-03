@@ -3,14 +3,13 @@ package com.example.controller;
 import java.util.Optional;
 
 import com.example.document.Task;
-import com.example.document.TimeWaste;
 import com.example.service.TaskService;
-import com.example.service.TimeWasteService;
 
 import io.micronaut.data.model.Page;
 import io.micronaut.data.model.Pageable;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Delete;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.Post;
@@ -51,5 +50,10 @@ public class TaskController {
     @Get("/{id}")
     Optional<Task> find(@PathVariable Long id) {
         return taskService.find(id);
+    }
+
+    @Delete("/{id}")
+    int delete(@PathVariable Long id) {
+        return taskService.delete(id);
     }
 }

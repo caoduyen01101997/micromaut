@@ -2,6 +2,8 @@ package com.example.controller;
 import com.example.document.Item;
 import com.example.service.ItemService;
 
+import io.micronaut.core.annotation.Nullable;
+import io.micronaut.data.model.Page;
 import io.micronaut.data.model.Pageable;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -13,6 +15,7 @@ import io.micronaut.http.annotation.Part;
 import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.Put;
+import io.micronaut.http.annotation.QueryValue;
 import io.micronaut.http.multipart.CompletedFileUpload;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
@@ -21,6 +24,7 @@ import jakarta.inject.Inject;
 import javax.validation.Valid;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 @Controller("/items")
@@ -70,6 +74,17 @@ public class ItemController {
         item.setId(id);
         Item updatedItem = itemService.save(item);
         return HttpResponse.ok(updatedItem);
+    }
+
+    @Get("/filtered")
+    public HttpResponse<?> find(
+        @QueryValue(defaultValue = "") String name,
+        @QueryValue(defaultValue = "0")  Double priceSell, 
+        @QueryValue(defaultValue = "0")  Double priceBuy,
+        Pageable page
+    ) {     
+        List<Item> item = itemService.getFilteredItems(name, priceSell, priceBuy);
+        return HttpResponse.ok(item);
     }
 
     @Delete("/{id}")

@@ -1,6 +1,7 @@
 package com.example.service;
 import com.example.document.Item;
 import com.example.repository.ItemRepository;
+import com.example.specification.ItemSpecification;
 import com.example.util.IdUtil;
 
 import io.micronaut.core.annotation.NonNull;
@@ -11,6 +12,8 @@ import jakarta.inject.Singleton;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
+
+import java.util.List;
 import java.util.Optional;
 
 @Singleton
@@ -21,6 +24,9 @@ public class ItemService {
 
     @Inject
     private ItemRepository itemRepository;
+
+    @Inject
+    ItemSpecification itemSpecification;
 
     @Transactional
     public Page<Item> list(Pageable pageable) {
@@ -45,7 +51,6 @@ public class ItemService {
                 entityManager.merge(item);
             }
         }
-
         return item;
         
     }
@@ -59,4 +64,10 @@ public class ItemService {
     public void delete(Long id) {
         itemRepository.deleteById(id);
     }
+    public List<Item> getFilteredItems(String name, Double priceSell, Double priceBuy) {
+        return itemRepository.findByNameAndPriceSellAndPriceBuy(name, priceSell, priceBuy);
+    }
+
+
+
 }

@@ -7,6 +7,7 @@ import io.micronaut.http.HttpRequest;
 import io.micronaut.security.authentication.*;
 import jakarta.inject.Singleton;
 import org.reactivestreams.Publisher;
+import org.mindrot.jbcrypt.BCrypt;
 import reactor.core.publisher.Mono;
 import java.util.Collections;
 import java.util.Optional;
@@ -25,10 +26,19 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         String username = authenticationRequest.getIdentity().toString();
         String password = authenticationRequest.getSecret().toString();
 
-        Optional<User> user = userRepository.findByUsername(username);
-        if (user.isPresent() && user.get().getPassword().equals(password)) {
-            return Mono.just((new CustomUserDetails(username, Collections.singletonList(user.get().getRole()))));       
-         }
+        Optional<User> userOpt = userRepository.findByUsername(username);
+        if (userOpt.isEmpty()) {
+            return Mono.just(new AuthenticationFailed());
+        }
+        User u = userOpt.get();
+        String stored = u.getPassword();
+        if (stored != null && stored.startsWith("$2")) { // đã hash BCrypt
+            if (BCrypt.checkpw(password, stored)) {
+                return Mono.just(new CustomUserDetails(username, Collections.singletonList(u.getRole())));
+            }
+        } else {
+            // Trường hợp dữ liệu cũ còn plain (không tự migrate nữa) => fail đăng nhập để buộc admin hash lại.
+        }
         return Mono.just(new AuthenticationFailed());
     }
 }

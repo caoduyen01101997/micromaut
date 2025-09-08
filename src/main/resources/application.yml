@@ -8,26 +8,40 @@ micronaut:
       enabled: true
       configurations:
         default:
-          allowedOrigins: 
+          allowedOrigins:
             - http://localhost:4200
-          allowedMethods: 
+          allowedMethods:
             - GET
             - POST
             - PUT
             - DELETE
-          allowedHeaders: 
+          allowedHeaders:
             - '*'
-          exposedHeaders: 
+          exposedHeaders:
             - '*'
           allowCredentials: true
   security:
-     authentication: bearer
-     token:
-       jwt:
-         signatures:
-           secret:
-             generator:
-               secret: "${JWT_GENERATOR_SIGNATURE_SECRET:pleaseChangeThisSecretForANewOne}"
+    authentication: bearer
+    endpoints:
+      login:
+        enabled: true
+        path: /login
+        post:
+          enabled: true
+    intercept-url-map:
+      - pattern: /login
+        http-method: POST
+        access: isAnonymous()
+      - pattern: /account/**
+        access: isAnonymous()
+      - pattern: /**
+        access: isAuthenticated()
+    token:
+      jwt:
+        signatures:
+          secret:
+            generator:
+              secret: "${JWT_GENERATOR_SIGNATURE_SECRET:pleaseChangeThisSecretForANewOne}"
 netty:
   default:
     allocator:
@@ -57,4 +71,9 @@ logger:
   levels:
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql: TRACE
+    io.micronaut.security: DEBUG
+    com.example.provider.CustomAuthenticationProvider: DEBUG
+    io.micronaut.web.router: TRACE
+    io.micronaut.security.filters: TRACE
+    io.micronaut.security.token: TRACE
 

@@ -1,0 +1,79 @@
+{
+  "info": {
+    "name": "Micronaut API",
+    "_postman_id": "micronaut-api-collection",
+    "description": "Collection chứa tất cả endpoints của dự án Micronaut",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "token", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Account",
+      "item": [
+        { "name": "List Users", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/account", "host": ["{{baseUrl}}"], "path": ["account"] } } },
+        { "name": "Create User", "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "body": {"mode":"raw","raw": "{\n  \"username\": \"user1\",\n  \"password\": \"123456\",\n  \"name\": \"User One\",\n  \"role\": \"VIEW\"\n}"}, "url": { "raw": "{{baseUrl}}/account", "host": ["{{baseUrl}}"], "path": ["account"] } } },
+        { "name": "Update User", "request": { "method": "PUT", "header": [{"key":"Content-Type","value":"application/json"}], "body": {"mode":"raw","raw": "{\n  \"id\": 1,\n  \"username\": \"user1\",\n  \"password\": \"123456\",\n  \"name\": \"User One Updated\",\n  \"role\": \"VIEW\"\n}"}, "url": { "raw": "{{baseUrl}}/account", "host": ["{{baseUrl}}"], "path": ["account"] } } },
+        { "name": "Get User By Id", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/account/1", "host": ["{{baseUrl}}"], "path": ["account","1"] } } }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        { "name": "Login", "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "body": {"mode":"raw","raw": "{\n  \"username\": \"user1\",\n  \"password\": \"123456\"\n}"}, "url": { "raw": "{{baseUrl}}/login", "host": ["{{baseUrl}}"], "path": ["login"] } } }
+      ]
+    },
+    {
+      "name": "Blog",
+      "item": [
+        { "name": "List Page", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/blog?page=0&size=10", "host": ["{{baseUrl}}"], "path": ["blog"], "query":[{"key":"page","value":"0"},{"key":"size","value":"10"}] } } },
+        { "name": "Create", "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "body": {"mode":"raw","raw": "{\n  \"title\": \"Sample Blog\",\n  \"content\": \"Content here\",\n  \"author\": \"user1\"\n}"}, "url": { "raw": "{{baseUrl}}/blog", "host": ["{{baseUrl}}"], "path": ["blog"] } } },
+        { "name": "Update", "request": { "method": "PUT", "header": [{"key":"Content-Type","value":"application/json"}], "body": {"mode":"raw","raw": "{\n  \"id\": 1,\n  \"title\": \"Updated Blog\",\n  \"content\": \"New content\",\n  \"author\": \"user1\"\n}"}, "url": { "raw": "{{baseUrl}}/blog", "host": ["{{baseUrl}}"], "path": ["blog"] } } },
+        { "name": "Get By Id", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/blog/1", "host": ["{{baseUrl}}"], "path": ["blog","1"] } } },
+        { "name": "Delete", "request": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/blog/1", "host": ["{{baseUrl}}"], "path": ["blog","1"] } } }
+      ]
+    },
+    {
+      "name": "Item",
+      "item": [
+        { "name": "List", "request": { "method": "GET", "header": [{"key":"Authorization","value":"Bearer {{token}}"}], "url": { "raw": "{{baseUrl}}/items", "host": ["{{baseUrl}}"], "path": ["items"] } } },
+        { "name": "Create Multipart", "request": { "method": "POST", "header": [{"key":"Authorization","value":"Bearer {{token}}"}], "body": {"mode":"formdata","formdata":[{"key":"name","value":"Item A","type":"text"},{"key":"price-sell","value":"100","type":"text"},{"key":"price-buy","value":"80","type":"text"},{"key":"image","type":"file","src":"/path/to/image.png"}]}, "url": { "raw": "{{baseUrl}}/items", "host": ["{{baseUrl}}"], "path": ["items"] } } },
+        { "name": "Get By Id", "request": { "method": "GET", "header": [{"key":"Authorization","value":"Bearer {{token}}"}], "url": { "raw": "{{baseUrl}}/items/1", "host": ["{{baseUrl}}"], "path": ["items","1"] } } },
+        { "name": "Update", "request": { "method": "PUT", "header": [{"key":"Content-Type","value":"application/json"},{"key":"Authorization","value":"Bearer {{token}}"}], "body": {"mode":"raw","raw": "{\n  \"id\": 1,\n  \"name\": \"Item A Updated\",\n  \"priceSell\": 120,\n  \"priceBuy\": 85\n}"}, "url": { "raw": "{{baseUrl}}/items/1", "host": ["{{baseUrl}}"], "path": ["items","1"] } } },
+        { "name": "Filtered", "request": { "method": "GET", "header": [{"key":"Authorization","value":"Bearer {{token}}"}], "url": { "raw": "{{baseUrl}}/items/filtered?name=&priceSell=0&priceBuy=0", "host": ["{{baseUrl}}"], "path": ["items","filtered"], "query":[{"key":"name","value":""},{"key":"priceSell","value":"0"},{"key":"priceBuy","value":"0"}] } } },
+        { "name": "Delete", "request": { "method": "DELETE", "header": [{"key":"Authorization","value":"Bearer {{token}}"}], "url": { "raw": "{{baseUrl}}/items/1", "host": ["{{baseUrl}}"], "path": ["items","1"] } } }
+      ]
+    },
+    {
+      "name": "Task",
+      "item": [
+        { "name": "List", "request": { "method": "GET", "header": [{"key":"Authorization","value":"Bearer {{token}}"}], "url": { "raw": "{{baseUrl}}/task?page=0&size=10", "host": ["{{baseUrl}}"], "path": ["task"], "query":[{"key":"page","value":"0"},{"key":"size","value":"10"}] } } },
+        { "name": "Create", "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"},{"key":"Authorization","value":"Bearer {{token}}"}], "body": {"mode":"raw","raw": "{\n  \"title\": \"Task 1\",\n  \"description\": \"Work desc\"\n}"}, "url": { "raw": "{{baseUrl}}/task", "host": ["{{baseUrl}}"], "path": ["task"] } } },
+        { "name": "Update", "request": { "method": "PUT", "header": [{"key":"Content-Type","value":"application/json"},{"key":"Authorization","value":"Bearer {{token}}"}], "body": {"mode":"raw","raw": "{\n  \"id\": 1,\n  \"title\": \"Task 1 Updated\",\n  \"description\": \"New desc\"\n}"}, "url": { "raw": "{{baseUrl}}/task", "host": ["{{baseUrl}}"], "path": ["task"] } } },
+        { "name": "Get By Id", "request": { "method": "GET", "header": [{"key":"Authorization","value":"Bearer {{token}}"}], "url": { "raw": "{{baseUrl}}/task/1", "host": ["{{baseUrl}}"], "path": ["task","1"] } } },
+        { "name": "Delete", "request": { "method": "DELETE", "header": [{"key":"Authorization","value":"Bearer {{token}}"}], "url": { "raw": "{{baseUrl}}/task/1", "host": ["{{baseUrl}}"], "path": ["task","1"] } } }
+      ]
+    },
+    {
+      "name": "TimeWaste",
+      "item": [
+        { "name": "List", "request": { "method": "GET", "header": [{"key":"Authorization","value":"Bearer {{token}}"}], "url": { "raw": "{{baseUrl}}/time-waste?page=0&size=10", "host": ["{{baseUrl}}"], "path": ["time-waste"], "query":[{"key":"page","value":"0"},{"key":"size","value":"10"}] } } },
+        { "name": "Create", "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"},{"key":"Authorization","value":"Bearer {{token}}"}], "body": {"mode":"raw","raw": "{\n  \"title\": \"Waste 1\",\n  \"description\": \"Scrolling\"\n}"}, "url": { "raw": "{{baseUrl}}/time-waste", "host": ["{{baseUrl}}"], "path": ["time-waste"] } } },
+        { "name": "Update", "request": { "method": "PUT", "header": [{"key":"Content-Type","value":"application/json"},{"key":"Authorization","value":"Bearer {{token}}"}], "body": {"mode":"raw","raw": "{\n  \"id\": 1,\n  \"title\": \"Waste 1 Updated\",\n  \"description\": \"Less scrolling\"\n}"}, "url": { "raw": "{{baseUrl}}/time-waste", "host": ["{{baseUrl}}"], "path": ["time-waste"] } } },
+        { "name": "Get By Id", "request": { "method": "GET", "header": [{"key":"Authorization","value":"Bearer {{token}}"}], "url": { "raw": "{{baseUrl}}/time-waste/1", "host": ["{{baseUrl}}"], "path": ["time-waste","1"] } } }
+      ]
+    },
+    {
+      "name": "Vocabulary",
+      "item": [
+        { "name": "Create", "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"},{"key":"Authorization","value":"Bearer {{token}}"}], "body": {"mode":"raw","raw": "{\n  \"word\": \"example\",\n  \"meaning\": \"ví dụ\",\n  \"note\": \"ghi chú\",\n  \"synonyms\": [\"sample\"],\n  \"examples\": [\"This is an example.\"]\n}"}, "url": { "raw": "{{baseUrl}}/vocabulary", "host": ["{{baseUrl}}"], "path": ["vocabulary"] } } },
+        { "name": "List", "request": { "method": "GET", "header": [{"key":"Authorization","value":"Bearer {{token}}"}], "url": { "raw": "{{baseUrl}}/vocabulary", "host": ["{{baseUrl}}"], "path": ["vocabulary"] } } },
+        { "name": "Get By Id", "request": { "method": "GET", "header": [{"key":"Authorization","value":"Bearer {{token}}"}], "url": { "raw": "{{baseUrl}}/vocabulary/1", "host": ["{{baseUrl}}"], "path": ["vocabulary","1"] } } },
+        { "name": "Update", "request": { "method": "PUT", "header": [{"key":"Content-Type","value":"application/json"},{"key":"Authorization","value":"Bearer {{token}}"}], "body": {"mode":"raw","raw": "{\n  \"word\": \"example\",\n  \"meaning\": \"ví dụ mới\",\n  \"note\": \"ghi chú mới\",\n  \"synonyms\": [\"sample\", \"case\"],\n  \"examples\": [\"Another example.\"]\n}"}, "url": { "raw": "{{baseUrl}}/vocabulary/1", "host": ["{{baseUrl}}"], "path": ["vocabulary","1"] } } },
+        { "name": "Delete", "request": { "method": "DELETE", "header": [{"key":"Authorization","value":"Bearer {{token}}"}], "url": { "raw": "{{baseUrl}}/vocabulary/1", "host": ["{{baseUrl}}"], "path": ["vocabulary","1"] } } }
+      ]
+    }
+  ]
+}

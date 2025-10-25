@@ -2,6 +2,8 @@
 micronaut:
   application:
     name: micromaut
+  scheduling:
+    enabled: true
   server:
     port: 8080
     cors:
@@ -76,4 +78,5 @@ logger:
     io.micronaut.web.router: TRACE
     io.micronaut.security.filters: TRACE
     io.micronaut.security.token: TRACE
+    io.micronaut.scheduling: DEBUG
 

@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import jakarta.annotation.PostConstruct; // Thay vì javax.annotation.PostConstruct
+import jakarta.annotation.Nullable;
 
 import java.util.ArrayList;
 
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 public class RemindService {
     private static final HttpClient HTTP = HttpClient.newHttpClient();
     private final ObjectMapper mapper = new ObjectMapper();
+    private final @Nullable PumpService pumpService;
     
     // Hardcode values thay vì System.getenv()
     private final String notionToken = "ntn_Y39296702863DRjCjOBCg18Ox9MVSuqSMEZ4PLPWX8Y3Hi";
@@ -31,8 +33,9 @@ public class RemindService {
     private long lastUpdateId = 0; // Lưu ID của update cuối cùng
 
     // Constructor để log khi bean được tạo
-    public RemindService() {
-        System.out.println("🚀 RemindService bean created at: " + LocalDateTime.now());
+    public RemindService(@Nullable PumpService pumpService) {
+        this.pumpService = pumpService;
+        System.out.println("🚀 RemindService bean created at: " + LocalDateTime.now() + (pumpService != null ? " with PumpService" : " WITHOUT PumpService (Firebase unavailable)"));
         System.out.println("📱 Chat ID: " + telegramChatId);
         System.out.println("🤖 Bot Token: " + telegramToken.substring(0, 10) + "...");
     }
@@ -184,7 +187,7 @@ public class RemindService {
                 break;
             case "/help":
                 System.out.println("❓ Executing /help command");
-                sendTelegramMessage("🤖 Bot Commands:\n/remind - Xem công việc hôm nay\n/help - Hiển thị trợ giúp\n/test - Test bot\n/ping - Ping bot");
+                sendTelegramMessage("🤖 Bot Commands:\n/remind - Xem công việc hôm nay\n/help - Hiển thị trợ giúp\n/test - Test bot\n/ping - Ping bot\n/pump_on - Bật máy bơm\n/pump_off - Tắt máy bơm\n/pump_status - Xem trạng thái máy bơm");
                 break;
             case "/start":
                 System.out.println("🏁 Executing /start command");
@@ -197,6 +200,46 @@ public class RemindService {
             case "/ping":
                 System.out.println("🏓 Executing /ping command");
                 sendTelegramMessage("🏓 Pong! Bot đang online.\nChat ID: " + telegramChatId + "\nTime: " + LocalDateTime.now());
+                break;
+            case "/pump_on":
+                System.out.println("💧 Executing /pump_on command");
+                if (pumpService == null) {
+                    sendTelegramMessage("⚠️ Máy bơm không khả dụng (Firebase offline)");
+                } else {
+                    try {
+                        pumpService.turnOn();
+                        sendTelegramMessage("✅ Máy bơm đã được BẬT.");
+                    } catch (Exception e) {
+                        sendTelegramMessage("❌ Không thể bật máy bơm: " + e.getMessage());
+                    }
+                }
+                break;
+            case "/pump_off":
+                System.out.println("🛑 Executing /pump_off command");
+                if (pumpService == null) {
+                    sendTelegramMessage("⚠️ Máy bơm không khả dụng (Firebase offline)");
+                } else {
+                    try {
+                        pumpService.turnOff();
+                        sendTelegramMessage("✅ Máy bơm đã được TẮT.");
+                    } catch (Exception e) {
+                        sendTelegramMessage("❌ Không thể tắt máy bơm: " + e.getMessage());
+                    }
+                }
+                break;
+            case "/pump_status":
+            case "/pumpstatus":
+                System.out.println("📊 Executing /pump_status (/pumpStatus) command");
+                if (pumpService == null) {
+                    sendTelegramMessage("⚠️ Máy bơm không khả dụng (Firebase offline)");
+                } else {
+                    try {
+                        boolean isOn = pumpService.getStatus();
+                        sendTelegramMessage("📊 Trạng thái máy bơm hiện tại: " + (isOn ? "🟢 ĐANG BẬT" : "🔴 ĐANG TẮT"));
+                    } catch (Exception e) {
+                        sendTelegramMessage("❌ Không thể lấy trạng thái máy bơm: " + e.getMessage());
+                    }
+                }
                 break;
             default:
                 System.out.println("❓ Unknown command: '" + command + "'");

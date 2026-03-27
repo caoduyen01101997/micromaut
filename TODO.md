@@ -1,7 +1,10 @@
-# TODO - GHCR Workflow Setup
+# Firebase Fix TODO
 
-- [x] Create GitHub Actions workflow at `.github/workflows/publish-ghcr.yml`
-- [x] Configure trigger for `push` on `main` and `workflow_dispatch`
-- [x] Configure permissions for `contents: read` and `packages: write`
-- [x] Add steps: checkout, login to GHCR, metadata extraction, build & push
-- [x] Verify workflow file content and update this checklist
+## Plan Steps:
+- [x] 1. Generate correct base64 from autowaterplant-service.json 
+- [x] 2. Update application.yml with real base64
+- [x] 3. Add @Nullable + null checks to PumpService.java
+- [x] 4. Add null checks to RemindService telegram commands
+- [x] 5. Test application startup
+- [ ] 6. Test pump control via Telegram
+- [ ] 7. Mark complete

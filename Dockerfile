@@ -9,7 +9,7 @@ COPY src /app/src
 RUN gradle shadowJar --no-daemon
 
 # Stage 2: Create the final image
-FROM --platform=linux/amd64 openjdk:11-jdk-slim
+FROM --platform=linux/amd64 eclipse-temurin:11-jre-jammy
 
 WORKDIR /app
 

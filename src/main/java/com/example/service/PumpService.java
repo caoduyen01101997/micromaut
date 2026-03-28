@@ -1,94 +1,59 @@
 package com.example.service;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import jakarta.inject.Singleton;
-import jakarta.annotation.Nullable;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 
 @Singleton
 public class PumpService {
 
-    private static final String PUMP_STATUS_PATH = "/pump/state";
+    private static final String FIREBASE_URL = "https://autowaterplant-3d78d-default-rtdb.asia-southeast1.firebasedatabase.app";
+    private static final String PUMP_STATE_URL = FIREBASE_URL + "/pump/state.json";
 
-    private final @Nullable FirebaseRealtimeService firebaseRealtimeService;
-
-    public PumpService(@Nullable FirebaseRealtimeService firebaseRealtimeService) {
-        this.firebaseRealtimeService = firebaseRealtimeService;
-    }
+    private final HttpClient httpClient = HttpClient.newHttpClient();
 
     public void turnOn() {
-        setPumpStatus(true);
+        setPumpStatus("ON");
     }
 
     public void turnOff() {
-        setPumpStatus(false);
+        setPumpStatus("OFF");
     }
 
     public boolean getStatus() {
-        if (firebaseRealtimeService == null || !firebaseRealtimeService.isInitialized()) {
-            System.out.println("⚠️ Firebase not available, returning pump OFF");
-            return false;
-        }
         try {
-            FirebaseDatabase database = firebaseRealtimeService.getDatabase();
-            DatabaseReference ref = database.getReference(PUMP_STATUS_PATH);
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(PUMP_STATE_URL))
+                    .GET()
+                    .build();
 
-            CompletableFuture<Boolean> future = new CompletableFuture<>();
-            ref.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot snapshot) {
-                    Object raw = snapshot.getValue();
-                    System.out.println("🔍 Firebase raw value: " + raw
-                            + " (type: " + (raw == null ? "null" : raw.getClass().getSimpleName()) + ")");
-                    if (raw instanceof Boolean) {
-                        future.complete((Boolean) raw);
-                    } else if (raw instanceof String) {
-                        future.complete("ON".equalsIgnoreCase((String) raw));
-                    } else {
-                        future.complete(false);
-                    }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError error) {
-                    future.completeExceptionally(new RuntimeException(error.getMessage()));
-                }
-            });
-
-            return future.get(10, TimeUnit.SECONDS);
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            String body = response.body().trim().replace("\"", "");
+            System.out.println("🔍 Firebase pump state: " + body);
+            return "ON".equalsIgnoreCase(body);
         } catch (Exception e) {
             System.err.println("❌ Cannot read pump status: " + e.getMessage());
             return false;
         }
     }
 
-    private void setPumpStatus(boolean status) {
-        if (firebaseRealtimeService == null || !firebaseRealtimeService.isInitialized()) {
-            System.out.println("⚠️ Firebase not available, skipping pump " + (status ? "ON" : "OFF"));
-            return;
-        }
-        String state = status ? "ON" : "OFF";
+    private void setPumpStatus(String state) {
         try {
-            FirebaseDatabase database = firebaseRealtimeService.getDatabase();
-            DatabaseReference ref = database.getReference(PUMP_STATUS_PATH);
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(PUMP_STATE_URL))
+                    .PUT(HttpRequest.BodyPublishers.ofString("\"" + state + "\""))
+                    .header("Content-Type", "application/json")
+                    .build();
 
-            CompletableFuture<Void> future = new CompletableFuture<>();
-            ref.setValue(state, (error, dbRef) -> {
-                if (error != null) {
-                    future.completeExceptionally(new RuntimeException(error.getMessage()));
-                } else {
-                    future.complete(null);
-                }
-            });
-
-            future.get(10, TimeUnit.SECONDS);
-            System.out.println("✅ Pump status set to: " + state + " at path: " + PUMP_STATUS_PATH);
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                System.out.println("✅ Pump status set to: " + state);
+            } else {
+                System.err.println("❌ Firebase write failed: HTTP " + response.statusCode() + " - " + response.body());
+            }
         } catch (Exception e) {
             System.err.println("❌ Cannot update pump status: " + e.getMessage());
         }

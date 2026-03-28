@@ -20,7 +20,7 @@ RUN ./gradlew shadowJar --no-daemon
 FROM eclipse-temurin:11-jre-alpine
 
 # Install tools cho debug
-RUN apk add --no-cache curl postgresql-client nmap
+RUN apk add --no-cache curl bash postgresql-client nmap tini
 
 WORKDIR /app
 
@@ -34,10 +34,5 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=120s --retries=5 \
   CMD curl -f http://localhost:8080 || exit 1
 
 # JVM + Hikari tuning cho connect chậm
-ENTRYPOINT ["sh", "-c", \
-  "java -XX:+UseG1GC -XX:MaxRAMPercentage=75.0 \
-  -Djava.security.egd=file:/dev/./urandom \
-  -Dcom.zaxxer.hikari.connectionTimeout=120000 \
-  -Dcom.zaxxer.hikari.initializationFailTimeout=0 \
-  -jar /app/app.jar"]
+ENTRYPOINT ["/sbin/init"]
 

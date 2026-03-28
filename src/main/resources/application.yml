@@ -54,10 +54,10 @@ mongodb:
     uri: mongodb://localhost:27017/coffee
 datasources:
   default:
-    url: jdbc:postgresql://157.10.53.34:5432/mydatabase
+    url: ${DB_URL:`jdbc:postgresql://localhost:5432/mydatabase`}
     driverClassName: org.postgresql.Driver
-    username: myuser
-    password: pass123
+    username: ${DB_USERNAME:`myuser`}
+    password: ${DB_PASSWORD:`pass123`}
     properties:
       hibernate:
         physical_naming_strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl

@@ -20,7 +20,8 @@ dependencies {
     testImplementation("org.mockito:mockito-core")
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testImplementation("io.micronaut.test:micronaut-test-spock")
-    runtimeOnly("ch.qos.logback:logback-classic")
+    implementation("ch.qos.logback:logback-classic:1.4.14")
+    implementation("org.slf4j:slf4j-api:1.7.36")
     implementation("io.micronaut:micronaut-validation")
     implementation("javax.annotation:javax.annotation-api")
     testImplementation("io.micronaut.test:micronaut-test-junit5")
@@ -31,8 +32,8 @@ dependencies {
     implementation("io.micronaut.sql:micronaut-jdbc-hikari") // JDBC connection pooling
     runtimeOnly("org.postgresql:postgresql")
     runtimeOnly("com.h2database:h2")
-    compileOnly("org.projectlombok:lombok")
-    annotationProcessor("org.projectlombok:lombok")
+    compileOnly("org.projectlombok:lombok:1.18.32")
+    annotationProcessor("org.projectlombok:lombok:1.18.32")
     annotationProcessor("io.micronaut.data:micronaut-data-processor")
     annotationProcessor("io.micronaut:micronaut-inject-java")
     implementation("io.micronaut:micronaut-inject")
@@ -45,6 +46,7 @@ dependencies {
     implementation("jakarta.persistence:jakarta.persistence-api")
     implementation("io.micronaut.data:micronaut-data-tx-hibernate")
     implementation("org.mindrot:jbcrypt:0.4") // BCrypt hashing
+    implementation("com.google.firebase:firebase-admin:9.3.0")
 }
 
 application {

@@ -8,8 +8,14 @@ services:
     ports:
       - "8080:8080"
     environment:
-      DB_URL: jdbc:postgresql://host.docker.internal:5432/mydatabase
+      DB_URL: jdbc:postgresql://my_postgres:5432/mydatabase
       DB_USERNAME: myuser
       DB_PASSWORD: pass123
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+    networks:
+      - default
+      - host_bridge
+
+networks:
+  host_bridge:
+    external: true
+    name: bridge

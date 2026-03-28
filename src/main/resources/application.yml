@@ -71,9 +71,7 @@ datasources:
       max-lifetime: 1800000          # 30 phút
       connection-test-query: SELECT 1
       pool-name: HikariPool
-    connectionTimeout: 120000      # 2 phút
     validationTimeout: 10000       # 10s
-    maximumPoolSize: 5
     minimumIdle: 2
     properties:
       hibernate:

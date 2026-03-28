@@ -1,20 +1,43 @@
-# Stage 1: Build the application
-FROM gradle:7.5.1-jdk11 AS build
+# Multi-stage build cho VPS Ubuntu 22.04
+FROM gradle:8.4-jdk17 AS build
+
+WORKDIR /home/gradle/app
+
+# Copy Gradle config trước để cache dependencies
+COPY build.gradle settings.gradle gradle.properties ./
+COPY gradle/wrapper ./gradle/wrapper
+
+# Download dependencies
+RUN ./gradlew dependencies --no-daemon
+
+# Copy source
+COPY src ./src
+
+# Build shadow JAR
+RUN ./gradlew shadowJar --no-daemon
+
+# Runtime stage - Alpine tương thích Ubuntu VPS
+FROM eclipse-temurin:11-jre-alpine
+
+# Install tools cho debug
+RUN apk add --no-cache curl postgresql-client nmap
 
 WORKDIR /app
 
-COPY build.gradle settings.gradle /app/
-COPY src /app/src
-
-RUN gradle shadowJar --no-daemon
-
-# Stage 2: Create the final image
-FROM --platform=linux/amd64 openjdk:11-jdk-slim
-
-WORKDIR /app
-
-COPY --from=build /app/build/libs/*.jar /app/app.jar
+# Copy JAR
+COPY --from=build /home/gradle/app/build/libs/*-all.jar ./app.jar
 
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Healthcheck với retry
+HEALTHCHECK --interval=30s --timeout=5s --start-period=120s --retries=5 \
+  CMD curl -f http://localhost:8080 || exit 1
+
+# JVM + Hikari tuning cho connect chậm
+ENTRYPOINT ["sh", "-c", \
+  "java -XX:+UseG1GC -XX:MaxRAMPercentage=75.0 \
+  -Djava.security.egd=file:/dev/./urandom \
+  -Dcom.zaxxer.hikari.connectionTimeout=120000 \
+  -Dcom.zaxxer.hikari.initializationFailTimeout=0 \
+  -jar /app/app.jar"]
+

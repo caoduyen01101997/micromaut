@@ -7,7 +7,3 @@ services:
     restart: unless-stopped
     ports:
       - "8080:8080"
-    environment:
-      DB_URL: jdbc:postgresql://172.17.0.3:5432/mydatabase
-      DB_USERNAME: myuser
-      DB_PASSWORD: pass123

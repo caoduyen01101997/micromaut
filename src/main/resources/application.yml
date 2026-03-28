@@ -58,6 +58,10 @@ datasources:
     driverClassName: org.postgresql.Driver
     username: myuser
     password: pass123
+    connectionTimeout: 120000      # 2 phút
+    validationTimeout: 10000       # 10s
+    maximumPoolSize: 5
+    minimumIdle: 2
     properties:
       hibernate:
         physical_naming_strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl

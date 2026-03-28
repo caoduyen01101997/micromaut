@@ -61,6 +61,16 @@ datasources:
     driverClassName: org.postgresql.Driver
     username: myuser
     password: pass123
+    hikari:
+      connection-timeout: 3000       # max chờ lấy connection (ms)
+      validation-timeout: 1000
+      initialization-fail-timeout: 5000
+      maximum-pool-size: 10
+      minimum-idle: 2
+      idle-timeout: 600000           # 10 phút
+      max-lifetime: 1800000          # 30 phút
+      connection-test-query: SELECT 1
+      pool-name: HikariPool
     connectionTimeout: 120000      # 2 phút
     validationTimeout: 10000       # 10s
     maximumPoolSize: 5

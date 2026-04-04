@@ -55,24 +55,19 @@ mongodb:
 datasources:
   default:
     url: jdbc:postgresql://157.10.53.34:5432/mydatabase
-    maximumPoolSize: 10
-    connectionTimeout: 120000
-    initializationFailTimeout: 0
     driverClassName: org.postgresql.Driver
     username: myuser
     password: pass123
     hikari:
-      connection-timeout: 3000       # max chờ lấy connection (ms)
-      validation-timeout: 1000
-      initialization-fail-timeout: 5000
+      connection-timeout: 5000       # max chờ lấy connection: 5 giây
+      validation-timeout: 3000       # validate connection: 3 giây
+      initialization-fail-timeout: -1  # không fail khi startup nếu DB chưa sẵn sàng
       maximum-pool-size: 10
       minimum-idle: 2
       idle-timeout: 600000           # 10 phút
       max-lifetime: 1800000          # 30 phút
       connection-test-query: SELECT 1
       pool-name: HikariPool
-    validationTimeout: 10000       # 10s
-    minimumIdle: 2
     properties:
       hibernate:
         physical_naming_strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl

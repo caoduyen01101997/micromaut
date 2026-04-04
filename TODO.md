@@ -1,44 +1,10 @@
-# Pump Telegram Fix TODO
+# VPS Docker Deployment Fix TODO
 
-## 1. Fix Gradle + Start ✅\n```
-rm -rf ~/.gradle/caches/
-./gradlew wrapper
-./gradlew run
-```
-```
-cd /Users/duyenpham/Desktop/source-code/micromaut
-./gradlew run
-```
-
-## 2. Verify startup logs
-- [ ] RemindService created WITH PumpService
-- [ ] Firebase initialized ✅
-- [ ] Bot connection successful
-- [ ] Polling Telegram every 5s
-
-## 3. Test correct command
-Send `/pump_on` (underscore):
-- [ ] Logs show "💧 Executing /pump_on command"
-- [ ] Telegram confirms "✅ Máy bơm đã được BẬT"
-- [ ] HTTP GET http://localhost:8080/pump/status → {"success":true,"state":"ON"}
-
-## 4. Optional: Support space commands
-Edit RemindService.handleCommand():
-```java
-case "/pump on":
-case "/pump_on":
-    // handle pump on
-```
-
-## 5. Fix Firebase Write Error ✅
-Firebase Console → Realtime DB → Rules:
-```
-{
-  "rules": {
-    "pump": { ".read": true, ".write": true }
-  }
-}
-```
-Test: `curl -X PUT -d '"ON"' https://autowaterplant-3d78d-default-rtdb.asia-southeast1.firebasedatabase.app/pump/state.json`
-
-## Status: Pump fully working after rules fix!
+## Plan Steps:
+### 1. ✅ Update Dockerfile (debian temurin:11-jre minimal + parse fix + no apt error + wget healthcheck)
+### 2. [] Test local build: ./gradlew shadowJar &amp;&amp; docker build -t micromaut .
+### 3. [] Test local run: docker run -p 8080:8080 micromaut
+### 4. [] Push to GHCR: Update workflow platforms if ARM, then git push
+### 5. [] VPS deploy: docker pull ghcr.io/[owner]/micromaut:latest &amp;&amp; docker run -d -p 80:8080 --name app --restart always ghcr.io/[owner]/micromaut:latest
+### 6. [] Check logs: docker logs app
+### 7. [ ] Verify http://[vps-ip]

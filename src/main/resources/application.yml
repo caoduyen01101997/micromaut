@@ -2,6 +2,10 @@
 micronaut:
   application:
     name: micromaut
+  object-storage:
+    aws:
+      default:
+        bucket: my-bucket  
   scheduling:
     enabled: true
   server:
@@ -94,4 +98,8 @@ logger:
     io.micronaut.security.filters: TRACE
     io.micronaut.security.token: TRACE
     io.micronaut.scheduling: DEBUG
+aws:
+  services:
+    s3:
+      endpoint-override: http://157.10.53.34:8333    
 

@@ -54,14 +54,14 @@ mongodb:
     uri: mongodb://localhost:27017/coffee
 datasources:
   default:
-    url: jdbc:postgresql://157.10.53.34:5432/mydatabase
+    url: jdbc:postgresql://172.17.0.3:5432/mydatabase
     driverClassName: org.postgresql.Driver
     username: myuser
     password: pass123
     hikari:
-      connection-timeout: 5000       # max chờ lấy connection: 5 giây
-      validation-timeout: 3000       # validate connection: 3 giây
-      initialization-fail-timeout: -1  # không fail khi startup nếu DB chưa sẵn sàng
+      connection-timeout: 120000     # 2 phút
+      validation-timeout: 3000
+      initialization-fail-timeout: -1
       maximum-pool-size: 10
       minimum-idle: 2
       idle-timeout: 600000           # 10 phút

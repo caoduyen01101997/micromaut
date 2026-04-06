@@ -8,6 +8,7 @@ import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.annotation.*;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.multipart.CompletedFileUpload;
+import io.micronaut.http.server.types.files.StreamedFile;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
@@ -15,6 +16,7 @@ import io.micronaut.security.rules.SecurityRule;
 import jakarta.inject.Inject;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -37,7 +39,8 @@ public class FileController {
             FileInfo fileInfo = fileService.uploadFile(
                 fileUpload.getFilename(),
                 name,
-                fileUpload.getBytes(),
+                fileUpload.getInputStream(),
+                fileUpload.getSize(),
                 fileUpload.getContentType().orElse(MediaType.of("application/octet-stream")).toString(),
                 userId
             );
@@ -55,9 +58,8 @@ public class FileController {
             return HttpResponse.notFound();
         }
         FileInfo fileInfo = optFile.get();
-        byte[] data = fileService.downloadFile(fileInfo.getFilePath());
-        return HttpResponse.ok(data)
-                .contentType(MediaType.of(fileInfo.getContentType()))
+        InputStream dataStream = fileService.downloadFileStream(fileInfo.getFilePath());
+        return HttpResponse.ok(new StreamedFile(dataStream, MediaType.of(fileInfo.getContentType()), fileInfo.getSize()))
                 .header("Content-Disposition", "inline; filename=\"" + fileInfo.getOriginalName() + "\"")
                 .header("Cache-Control", "max-age=86400");
     }
@@ -70,9 +72,8 @@ public class FileController {
             return HttpResponse.notFound();
         }
         FileInfo fileInfo = optFile.get();
-        byte[] data = fileService.downloadFile(fileInfo.getFilePath());
-        return HttpResponse.ok(data)
-                .contentType(MediaType.of(fileInfo.getContentType()))
+        InputStream dataStream = fileService.downloadFileStream(fileInfo.getFilePath());
+        return HttpResponse.ok(new StreamedFile(dataStream, MediaType.of(fileInfo.getContentType()), fileInfo.getSize()))
                 .header("Content-Disposition", "attachment; filename=\"" + fileInfo.getOriginalName() + "\"");
     }
 
@@ -119,7 +120,8 @@ public class FileController {
             FileInfo updated = fileService.updateFile(
                 id,
                 fileUpload.getFilename(),
-                fileUpload.getBytes(),
+                fileUpload.getInputStream(),
+                fileUpload.getSize(),
                 fileUpload.getContentType().orElse(MediaType.of("application/octet-stream")).toString()
             );
             return HttpResponse.ok(updated);
@@ -139,3 +141,4 @@ public class FileController {
         }
     }
 }
+

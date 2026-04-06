@@ -113,7 +113,7 @@ logger:
 aws:
   services:
     s3:
-      endpoint-override: http://157.10.53.34:8333
+      endpoint-override: http://172.21.0.5:8333
       access-key: admin
       secret-key: admin123456
 

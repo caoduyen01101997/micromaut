@@ -47,6 +47,7 @@ dependencies {
     implementation("io.micronaut.data:micronaut-data-tx-hibernate")
     implementation("org.mindrot:jbcrypt:0.4") // BCrypt hashing
     implementation("com.google.firebase:firebase-admin:9.3.0")
+    implementation("software.amazon.awssdk:s3:2.20.162")
 }
 
 application {

@@ -1,6 +1,5 @@
 package com.example.document;
 
-import io.micronaut.data.annotation.GeneratedValue;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
@@ -8,6 +7,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -17,14 +18,17 @@ import javax.persistence.TemporalType;
 @Entity(name = "file_info")
 public class FileInfo {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "original_name", length = 255)
     private String originalName;
 
+    @Column(name = "name", length = 255)
+    private String name;
+
     @Column(name = "file_path", length = 500)
-    private String filePath; // SeaweedFS fid like \"1,abc123\"
+    private String filePath;
 
     @Column(name = "content_type", length = 100)
     private String contentType;
@@ -54,6 +58,14 @@ public class FileInfo {
 
     public void setOriginalName(String originalName) {
         this.originalName = originalName;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getFilePath() {

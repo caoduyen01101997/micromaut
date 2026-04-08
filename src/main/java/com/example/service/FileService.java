@@ -2,6 +2,7 @@ package com.example.service;
 
 import com.example.document.FileInfo;
 import com.example.repository.FileInfoRepository;
+import io.micronaut.context.annotation.Value;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import org.slf4j.Logger;
@@ -20,7 +21,9 @@ import java.util.UUID;
 public class FileService {
 
     private static final Logger LOG = LoggerFactory.getLogger(FileService.class);
-    private static final String BUCKET_NAME = "my-bucket";
+
+    @Value("${micronaut.object-storage.aws.default.bucket:my-bucket}")
+    private String bucketName;
 
     @Inject
     private FileInfoRepository fileInfoRepository;
@@ -33,7 +36,7 @@ public class FileService {
         String key = UUID.randomUUID().toString() + "_" + originalName;
 
         PutObjectRequest putRequest = PutObjectRequest.builder()
-                .bucket(BUCKET_NAME)
+                .bucket(bucketName)
                 .key(key)
                 .contentType(contentType)
                 .build();
@@ -55,7 +58,7 @@ public class FileService {
     // READ - Download file stream for large files
     public InputStream downloadFileStream(String filePath) {
         GetObjectRequest getRequest = GetObjectRequest.builder()
-                .bucket(BUCKET_NAME)
+                .bucket(bucketName)
                 .key(filePath)
                 .build();
 
@@ -98,7 +101,7 @@ public class FileService {
         String newKey = UUID.randomUUID().toString() + "_" + originalName;
 
         PutObjectRequest putRequest = PutObjectRequest.builder()
-                .bucket(BUCKET_NAME)
+                .bucket(bucketName)
                 .key(newKey)
                 .contentType(contentType)
                 .build();
@@ -128,7 +131,7 @@ public class FileService {
     // Delete from S3 storage
     private void deleteFromS3(String filePath) {
         DeleteObjectRequest deleteRequest = DeleteObjectRequest.builder()
-                .bucket(BUCKET_NAME)
+                .bucket(bucketName)
                 .key(filePath)
                 .build();
 
@@ -136,4 +139,3 @@ public class FileService {
         LOG.info("Deleted file from S3: {}", filePath);
     }
 }
-

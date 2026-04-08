@@ -86,17 +86,26 @@ public class FileController {
     }
 
     // READ - List files with pagination (for gallery)
-    @Get("/list{?page,size}")
+@Get("/list{?page,size,search}")
     public HttpResponse<Map<String, Object>> list(
             @Nullable @QueryValue(defaultValue = "1") Integer page,
-            @Nullable @QueryValue(defaultValue = "20") Integer size) {
+            @Nullable @QueryValue(defaultValue = "20") Integer size,
+            @Nullable @QueryValue String search) {
         List<FileInfo> allFiles = fileService.findByUserId(1L);
-        int total = allFiles.size();
+
+        List<FileInfo> filteredFiles = search == null || search.trim().isEmpty() 
+            ? allFiles 
+            : allFiles.stream()
+                .filter(f -> f.getOriginalName().toLowerCase().contains(search.toLowerCase()) ||
+                             (f.getName() != null && f.getName().toLowerCase().contains(search.toLowerCase())))
+                .toList();
+
+        int total = filteredFiles.size();
         int fromIndex = (page - 1) * size;
         int toIndex = Math.min(fromIndex + size, total);
 
         List<FileInfo> pagedFiles = fromIndex < total
-                ? allFiles.subList(fromIndex, toIndex)
+                ? filteredFiles.subList(fromIndex, toIndex)
                 : List.of();
 
         return HttpResponse.ok(Map.of(

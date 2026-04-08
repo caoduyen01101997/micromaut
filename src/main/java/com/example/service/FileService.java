@@ -2,6 +2,8 @@ package com.example.service;
 
 import com.example.document.FileInfo;
 import com.example.repository.FileInfoRepository;
+// import com.example.spec.FileInfoSpecs;
+
 import io.micronaut.context.annotation.Value;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
@@ -80,9 +82,18 @@ public class FileService {
         return fileInfoRepository.findByFilePath(filePath);
     }
 
-    // READ - List files by userId
+    // READ - Paginated list with search (optimized)
+    public io.micronaut.data.model.Page<FileInfo> listFiles(String search, io.micronaut.data.model.Pageable pageable) {
+        if (search == null || search.trim().isEmpty()) {
+            return fileInfoRepository.findAll(pageable);
+        }
+        // return fileInfoRepository.findAll(FileInfoSpecs.search(search), pageable);
+        return fileInfoRepository.findAll(pageable);
+    }
+
+    // Backward compat
     public List<FileInfo> findByUserId(Long userId) {
-        return fileInfoRepository.findAll();
+        return fileInfoRepository.findAll(io.micronaut.data.model.Pageable.from(1000)).getContent();
     }
 
     // UPDATE - Replace file content

@@ -8,6 +8,7 @@ import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.annotation.*;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.multipart.CompletedFileUpload;
+import io.micronaut.http.server.types.files.StreamedFile;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
@@ -15,6 +16,7 @@ import io.micronaut.security.rules.SecurityRule;
 import jakarta.inject.Inject;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -37,7 +39,8 @@ public class FileController {
             FileInfo fileInfo = fileService.uploadFile(
                 fileUpload.getFilename(),
                 name,
-                fileUpload.getBytes(),
+                fileUpload.getInputStream(),
+                fileUpload.getSize(),
                 fileUpload.getContentType().orElse(MediaType.of("application/octet-stream")).toString(),
                 userId
             );
@@ -55,9 +58,8 @@ public class FileController {
             return HttpResponse.notFound();
         }
         FileInfo fileInfo = optFile.get();
-        byte[] data = fileService.downloadFile(fileInfo.getFilePath());
-        return HttpResponse.ok(data)
-                .contentType(MediaType.of(fileInfo.getContentType()))
+        InputStream dataStream = fileService.downloadFileStream(fileInfo.getFilePath());
+        return HttpResponse.ok(new StreamedFile(dataStream, MediaType.of(fileInfo.getContentType()), fileInfo.getSize()))
                 .header("Content-Disposition", "inline; filename=\"" + fileInfo.getOriginalName() + "\"")
                 .header("Cache-Control", "max-age=86400");
     }
@@ -70,9 +72,8 @@ public class FileController {
             return HttpResponse.notFound();
         }
         FileInfo fileInfo = optFile.get();
-        byte[] data = fileService.downloadFile(fileInfo.getFilePath());
-        return HttpResponse.ok(data)
-                .contentType(MediaType.of(fileInfo.getContentType()))
+        InputStream dataStream = fileService.downloadFileStream(fileInfo.getFilePath());
+        return HttpResponse.ok(new StreamedFile(dataStream, MediaType.of(fileInfo.getContentType()), fileInfo.getSize()))
                 .header("Content-Disposition", "attachment; filename=\"" + fileInfo.getOriginalName() + "\"");
     }
 
@@ -84,26 +85,19 @@ public class FileController {
                 .orElse(HttpResponse.notFound());
     }
 
-    // READ - List files with pagination (for gallery)
-    @Get("/list{?page,size}")
+    // READ - List files with Pageable (optimized performance)
+    @Get("/list")
     public HttpResponse<Map<String, Object>> list(
-            @Nullable @QueryValue(defaultValue = "1") Integer page,
-            @Nullable @QueryValue(defaultValue = "20") Integer size) {
-        List<FileInfo> allFiles = fileService.findByUserId(1L);
-        int total = allFiles.size();
-        int fromIndex = (page - 1) * size;
-        int toIndex = Math.min(fromIndex + size, total);
-
-        List<FileInfo> pagedFiles = fromIndex < total
-                ? allFiles.subList(fromIndex, toIndex)
-                : List.of();
-
+            io.micronaut.data.model.Pageable pageable,
+            @Nullable @QueryValue String search) {
+        io.micronaut.data.model.Page<FileInfo> pageResult = fileService.listFiles(search, pageable);
+        
         return HttpResponse.ok(Map.of(
-                "content", pagedFiles,
-                "totalElements", total,
-                "totalPages", (int) Math.ceil((double) total / size),
-                "page", page,
-                "size", size
+                "content", pageResult.getContent(),
+                "totalElements", pageResult.getNumberOfElements(),
+                "totalPages", pageResult.getTotalPages(),
+                "page", pageResult.getPageNumber() + 1,  // 1-based for frontend
+                "size", pageResult.getSize()
         ));
     }
 
@@ -119,7 +113,8 @@ public class FileController {
             FileInfo updated = fileService.updateFile(
                 id,
                 fileUpload.getFilename(),
-                fileUpload.getBytes(),
+                fileUpload.getInputStream(),
+                fileUpload.getSize(),
                 fileUpload.getContentType().orElse(MediaType.of("application/octet-stream")).toString()
             );
             return HttpResponse.ok(updated);
@@ -139,3 +134,4 @@ public class FileController {
         }
     }
 }
+

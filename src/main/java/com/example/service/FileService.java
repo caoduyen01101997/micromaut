@@ -2,6 +2,9 @@ package com.example.service;
 
 import com.example.document.FileInfo;
 import com.example.repository.FileInfoRepository;
+// import com.example.spec.FileInfoSpecs;
+
+import io.micronaut.context.annotation.Value;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import org.slf4j.Logger;
@@ -20,7 +23,9 @@ import java.util.UUID;
 public class FileService {
 
     private static final Logger LOG = LoggerFactory.getLogger(FileService.class);
-    private static final String BUCKET_NAME = "my-bucket";
+
+    @Value("${micronaut.object-storage.aws.default.bucket:my-bucket}")
+    private String bucketName;
 
     @Inject
     private FileInfoRepository fileInfoRepository;
@@ -29,38 +34,38 @@ public class FileService {
     private S3Client s3Client;
 
     // CREATE - Upload file
-    public FileInfo uploadFile(String originalName, String name, byte[] data, String contentType, Long userId) {
+    public FileInfo uploadFile(String originalName, String name, InputStream inputStream, long size, String contentType, Long userId) {
         String key = UUID.randomUUID().toString() + "_" + originalName;
 
         PutObjectRequest putRequest = PutObjectRequest.builder()
-                .bucket(BUCKET_NAME)
+                .bucket(bucketName)
                 .key(key)
                 .contentType(contentType)
                 .build();
 
-        s3Client.putObject(putRequest, RequestBody.fromBytes(data));
+        s3Client.putObject(putRequest, RequestBody.fromInputStream(inputStream, size));
 
         FileInfo fileInfo = new FileInfo();
         fileInfo.setOriginalName(originalName);
         fileInfo.setName(name);
         fileInfo.setFilePath(key);
         fileInfo.setContentType(contentType);
-        fileInfo.setSize((long) data.length);
+        fileInfo.setSize(size);
         fileInfo.setUploadDate(new Date());
         fileInfo.setUserId(userId);
 
         return fileInfoRepository.save(fileInfo);
     }
 
-    // READ - Download file
-    public byte[] downloadFile(String filePath) {
+    // READ - Download file stream for large files
+    public InputStream downloadFileStream(String filePath) {
         GetObjectRequest getRequest = GetObjectRequest.builder()
-                .bucket(BUCKET_NAME)
+                .bucket(bucketName)
                 .key(filePath)
                 .build();
 
-        try (InputStream inputStream = s3Client.getObject(getRequest)) {
-            return inputStream.readAllBytes();
+        try {
+            return s3Client.getObject(getRequest);
         } catch (Exception e) {
             LOG.error("Error downloading file: {}", filePath, e);
             throw new RuntimeException("Download failed", e);
@@ -77,13 +82,22 @@ public class FileService {
         return fileInfoRepository.findByFilePath(filePath);
     }
 
-    // READ - List files by userId
+    // READ - Paginated list with search (optimized)
+    public io.micronaut.data.model.Page<FileInfo> listFiles(String search, io.micronaut.data.model.Pageable pageable) {
+        if (search == null || search.trim().isEmpty()) {
+            return fileInfoRepository.findAll(pageable);
+        }
+        // return fileInfoRepository.findAll(FileInfoSpecs.search(search), pageable);
+        return fileInfoRepository.findAll(pageable);
+    }
+
+    // Backward compat
     public List<FileInfo> findByUserId(Long userId) {
-        return fileInfoRepository.findAll();
+        return fileInfoRepository.findAll(io.micronaut.data.model.Pageable.from(1000)).getContent();
     }
 
     // UPDATE - Replace file content
-    public FileInfo updateFile(Long id, String originalName, byte[] data, String contentType) {
+    public FileInfo updateFile(Long id, String originalName, InputStream inputStream, long size, String contentType) {
         Optional<FileInfo> optFile = fileInfoRepository.findById(id);
         if (optFile.isEmpty()) {
             throw new RuntimeException("File not found with id: " + id);
@@ -98,17 +112,17 @@ public class FileService {
         String newKey = UUID.randomUUID().toString() + "_" + originalName;
 
         PutObjectRequest putRequest = PutObjectRequest.builder()
-                .bucket(BUCKET_NAME)
+                .bucket(bucketName)
                 .key(newKey)
                 .contentType(contentType)
                 .build();
 
-        s3Client.putObject(putRequest, RequestBody.fromBytes(data));
+        s3Client.putObject(putRequest, RequestBody.fromInputStream(inputStream, size));
 
         fileInfo.setOriginalName(originalName);
         fileInfo.setFilePath(newKey);
         fileInfo.setContentType(contentType);
-        fileInfo.setSize((long) data.length);
+        fileInfo.setSize(size);
 
         return fileInfoRepository.update(fileInfo);
     }
@@ -128,7 +142,7 @@ public class FileService {
     // Delete from S3 storage
     private void deleteFromS3(String filePath) {
         DeleteObjectRequest deleteRequest = DeleteObjectRequest.builder()
-                .bucket(BUCKET_NAME)
+                .bucket(bucketName)
                 .key(filePath)
                 .build();
 

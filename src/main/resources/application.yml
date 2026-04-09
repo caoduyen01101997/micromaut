@@ -9,13 +9,15 @@ micronaut:
   scheduling:
     enabled: true
   server:
-    port: 8085
+    port: 8080
     cors:
       enabled: true
       configurations:
         default:
           allowedOrigins:
             - http://localhost:4200
+            - http://157.10.53.34
+            - http://planforme.online
           allowedMethods:
             - GET
             - POST

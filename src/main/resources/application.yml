@@ -72,7 +72,7 @@ mongodb:
   uri: mongodb://localhost:27017/coffee
 datasources:
   default:
-    url: jdbc:postgresql://172.17.0.3:5432/mydatabase
+    url: jdbc:postgresql://157.10.53.34:5432/mydatabase
     driverClassName: org.postgresql.Driver
     username: myuser
     password: pass123
@@ -115,7 +115,7 @@ logger:
 aws:
   services:
     s3:
-      endpoint-override: http://172.21.0.5:8333
+      endpoint-override: http://157.10.53.34:8333
       access-key: admin
       secret-key: admin123456
 

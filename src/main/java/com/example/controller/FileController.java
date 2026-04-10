@@ -14,6 +14,8 @@ import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import jakarta.inject.Inject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,6 +27,9 @@ import java.util.Optional;
 @Secured(SecurityRule.IS_ANONYMOUS)
 @ExecuteOn(TaskExecutors.IO)
 public class FileController {
+
+    private static final Logger LOG = LoggerFactory.getLogger(FileController.class);
+
     @Inject
     private FileService fileService;
 
@@ -58,10 +63,15 @@ public class FileController {
             return HttpResponse.notFound();
         }
         FileInfo fileInfo = optFile.get();
-        InputStream dataStream = fileService.downloadFileStream(fileInfo.getFilePath());
-        return HttpResponse.ok(new StreamedFile(dataStream, MediaType.of(fileInfo.getContentType()), fileInfo.getSize()))
-                .header("Content-Disposition", "inline; filename=\"" + fileInfo.getOriginalName() + "\"")
-                .header("Cache-Control", "max-age=86400");
+        try {
+            InputStream dataStream = fileService.downloadFileStream(fileInfo.getFilePath());
+            return HttpResponse.ok(new StreamedFile(dataStream, MediaType.of(fileInfo.getContentType()), fileInfo.getSize()))
+                    .header("Content-Disposition", "inline; filename=\"" + fileInfo.getOriginalName() + "\"")
+                    .header("Cache-Control", "max-age=86400");
+        } catch (Exception e) {
+            LOG.error("Error viewing file id={}: {}", id, e.getMessage(), e);
+            return HttpResponse.serverError("Failed to view file");
+        }
     }
 
     // READ - Download file
@@ -72,9 +82,14 @@ public class FileController {
             return HttpResponse.notFound();
         }
         FileInfo fileInfo = optFile.get();
-        InputStream dataStream = fileService.downloadFileStream(fileInfo.getFilePath());
-        return HttpResponse.ok(new StreamedFile(dataStream, MediaType.of(fileInfo.getContentType()), fileInfo.getSize()))
-                .header("Content-Disposition", "attachment; filename=\"" + fileInfo.getOriginalName() + "\"");
+        try {
+            InputStream dataStream = fileService.downloadFileStream(fileInfo.getFilePath());
+            return HttpResponse.ok(new StreamedFile(dataStream, MediaType.of(fileInfo.getContentType()), fileInfo.getSize()))
+                    .header("Content-Disposition", "attachment; filename=\"" + fileInfo.getOriginalName() + "\"");
+        } catch (Exception e) {
+            LOG.error("Error downloading file id={}: {}", id, e.getMessage(), e);
+            return HttpResponse.serverError("Failed to download file");
+        }
     }
 
     // READ - Get file info

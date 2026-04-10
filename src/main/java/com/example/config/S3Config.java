@@ -7,6 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.http.SdkHttpClient;
+import software.amazon.awssdk.http.apache.ApacheHttpClient;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
@@ -14,6 +16,7 @@ import software.amazon.awssdk.services.s3.model.HeadBucketRequest;
 import software.amazon.awssdk.services.s3.model.NoSuchBucketException;
 
 import java.net.URI;
+import java.time.Duration;
 
 @Factory
 public class S3Config {
@@ -34,7 +37,16 @@ public class S3Config {
 
     @Singleton
     public S3Client s3Client() {
+        // Configure connection pool to prevent exhaustion
+        SdkHttpClient httpClient = ApacheHttpClient.builder()
+                .maxConnections(200)
+                .connectionTimeout(Duration.ofSeconds(10))
+                .socketTimeout(Duration.ofSeconds(30))
+                .connectionAcquisitionTimeout(Duration.ofSeconds(10))
+                .build();
+
         S3Client client = S3Client.builder()
+                .httpClient(httpClient)
                 .endpointOverride(URI.create(endpoint))
                 .region(Region.US_EAST_1)
                 .credentialsProvider(StaticCredentialsProvider.create(

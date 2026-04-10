@@ -36,6 +36,8 @@ micronaut:
         access: isAnonymous()
       - pattern: /account/**
         access: isAnonymous()
+      - pattern: /files/**
+        access: isAnonymous()
       - pattern: /**
         access: isAuthenticated()
     token:

@@ -22,12 +22,14 @@ public class RemindService {
     private static final HttpClient HTTP = HttpClient.newHttpClient();
     private final ObjectMapper mapper = new ObjectMapper();
     private final PumpService pumpService;
+    private String botUserName = null;
     
     // Hardcode values thay vì System.getenv()
     private final String notionToken = "ntn_Y39296702863DRjCjOBCg18Ox9MVSuqSMEZ4PLPWX8Y3Hi";
     private final String databaseId = "2900ea3a028e8054abb5f520e01f89fe";
     private final String telegramToken = "7500392061:AAHA5S6h69-XJ9FTWIOUnLMqINRhKy7FBWk";
     private final String telegramChatId = "890385679";
+    private final String telegramGroupChatId = "-5217583521"; // Group chat ID
     
     private long lastUpdateId = 0; // Lưu ID của update cuối cùng
 
@@ -39,10 +41,22 @@ public class RemindService {
         System.out.println("🤖 Bot Token: " + telegramToken.substring(0, 10) + "...");
     }
 
-    @Scheduled(cron = "0 0 8 * * *") // 08:00 mỗi ngày
+    @Scheduled(cron = "0 0 8 * * *") // 08:00 mỗi ngày → private chat
     void fetchAndNotifyDaily() {
         System.out.println("[" + LocalDateTime.now() + "] Running scheduled reminder at 8:00 AM");
-        sendReminder();
+        sendReminder(telegramChatId); // Gửi về private chat khi scheduled
+    }
+
+    @Scheduled(cron = "0 0 7 * * *") // 07:00 mỗi ngày → group
+    void remindGroupMorning() {
+        System.out.println("[" + LocalDateTime.now() + "] Running group reminder at 7:00 AM");
+        sendReminder(telegramGroupChatId);
+    }
+
+    @Scheduled(cron = "0 0 11 * * *") // 11:00 mỗi ngày → group
+    void remindGroupNoon() {
+        System.out.println("[" + LocalDateTime.now() + "] Running group reminder at 11:00 AM");
+        sendReminder(telegramGroupChatId);
     }
 
     // Test connection khi khởi động và reset offset
@@ -89,6 +103,7 @@ public class RemindService {
                 if (botRes.statusCode() == 200) {
                     JsonNode botInfo = mapper.readTree(botRes.body());
                     String botName = botInfo.path("result").path("username").asText();
+                    this.botUserName = botName;
                     System.out.println("✅ Bot connection successful! Bot username: @" + botName);
                     
                     // Send test message
@@ -145,20 +160,31 @@ public class RemindService {
                     
                     JsonNode message = update.path("message");
                     if (message.has("text")) {
-                        String text = message.path("text").asText();
-                        String chatId = message.path("chat").path("id").asText();
-                        String firstName = message.path("from").path("first_name").asText("");
-                        
-                        System.out.println("💬 Received message: '" + text + "' from chat: " + chatId + " (user: " + firstName + ")");
-                        System.out.println("🎯 Expected chat ID: " + telegramChatId);
-                        
-                        // Kiểm tra command từ đúng chat ID
-                        if (telegramChatId.equals(chatId)) {
-                            System.out.println("✅ Chat ID matches, processing command...");
-                            handleCommand(text, firstName);
-                        } else {
-                            System.out.println("❌ Chat ID does not match! Received: " + chatId + ", Expected: " + telegramChatId);
-                        }
+                            String text = message.path("text").asText();
+                            String chatId = message.path("chat").path("id").asText();
+                            String chatType = message.path("chat").path("type").asText("");
+                            String firstName = message.path("from").path("first_name").asText("");
+
+                            System.out.println("💬 Received message: '" + text + "' from chat: " + chatId + " (type: " + chatType + ", user: " + firstName + ")");
+                            System.out.println("🎯 Expected chat ID: " + telegramChatId + ", botUserName: " + botUserName);
+
+                            // Normalize command token and strip optional @BotUsername
+                            String normalized = text.split("\\s+")[0];
+                            String cmdToken = normalized.split("@")[0];
+                            boolean addressedToBot = true;
+                            if (normalized.contains("@") && botUserName != null) {
+                                addressedToBot = normalized.endsWith("@" + botUserName);
+                            }
+
+                            boolean fromAllowedPrivate = telegramChatId.equals(chatId);
+                            boolean fromAllowedGroup = ("group".equals(chatType) || "supergroup".equals(chatType)) && addressedToBot;
+
+                            if (fromAllowedPrivate || fromAllowedGroup) {
+                                System.out.println("✅ Allowed message, processing command: " + cmdToken);
+                                handleCommand(cmdToken, firstName, chatId);
+                            } else {
+                                System.out.println("❌ Ignoring message — not addressed to bot or from allowed chat. Received: " + chatId + " (type: " + chatType + ")");
+                            }
                     } else {
                         System.out.println("⚠️ Update does not contain text message");
                         System.out.println("📋 Update content: " + update.toString());
@@ -176,46 +202,46 @@ public class RemindService {
         }
     }
 
-    private void handleCommand(String command, String userName) {
-        System.out.println("🎮 [" + LocalDateTime.now() + "] Handling command: '" + command + "' from user: " + userName);
+    private void handleCommand(String command, String userName, String replyChatId) {
+        System.out.println("🎮 [" + LocalDateTime.now() + "] Handling command: '" + command + "' from user: " + userName + " -> reply to: " + replyChatId);
         
         switch (command.toLowerCase().trim()) {
             case "/remind":
                 System.out.println("📋 Executing /remind command");
-                sendReminder();
+                sendReminder(replyChatId);
                 break;
             case "/help":
                 System.out.println("❓ Executing /help command");
-                sendTelegramMessage("🤖 Bot Commands:\n/remind - Xem công việc hôm nay\n/help - Hiển thị trợ giúp\n/test - Test bot\n/ping - Ping bot\n/pump_on - Bật máy bơm\n/pump_off - Tắt máy bơm\n/pump_status - Xem trạng thái máy bơm");
+                sendTelegramMessage(replyChatId, "🤖 Bot Commands:\n/remind - Xem công việc hôm nay\n/help - Hiển thị trợ giúp\n/test - Test bot\n/ping - Ping bot\n/pump_on - Bật máy bơm\n/pump_off - Tắt máy bơm\n/pump_status - Xem trạng thái máy bơm");
                 break;
             case "/start":
                 System.out.println("🏁 Executing /start command");
-                sendTelegramMessage("👋 Chào " + userName + "!\nBot sẽ nhắc nhở công việc hàng ngày lúc 8:00 AM.\nGõ /help để xem các lệnh có sẵn.");
+                sendTelegramMessage(replyChatId, "👋 Chào " + userName + "!\nBot sẽ nhắc nhở công việc hàng ngày lúc 8:00 AM.\nGõ /help để xem các lệnh có sẵn.");
                 break;
             case "/test":
                 System.out.println("🧪 Executing /test command");
-                sendTelegramMessage("🤖 Bot đang hoạt động bình thường!\nThời gian: " + LocalDateTime.now());
+                sendTelegramMessage(replyChatId, "🤖 Bot đang hoạt động bình thường!\nThời gian: " + LocalDateTime.now());
                 break;
             case "/ping":
                 System.out.println("🏓 Executing /ping command");
-                sendTelegramMessage("🏓 Pong! Bot đang online.\nChat ID: " + telegramChatId + "\nTime: " + LocalDateTime.now());
+                sendTelegramMessage(replyChatId, "🏓 Pong! Bot đang online.\nTime: " + LocalDateTime.now());
                 break;
             case "/pump_on":
                 System.out.println("💧 Executing /pump_on command");
                 try {
                     pumpService.turnOn();
-                    sendTelegramMessage("✅ Máy bơm đã được BẬT.");
+                    sendTelegramMessage(replyChatId, "✅ Máy bơm đã được BẬT.");
                 } catch (Exception e) {
-                    sendTelegramMessage("❌ Không thể bật máy bơm: " + e.getMessage());
+                    sendTelegramMessage(replyChatId, "❌ Không thể bật máy bơm: " + e.getMessage());
                 }
                 break;
             case "/pump_off":
                 System.out.println("🛑 Executing /pump_off command");
                 try {
                     pumpService.turnOff();
-                    sendTelegramMessage("✅ Máy bơm đã được TẮT.");
+                    sendTelegramMessage(replyChatId, "✅ Máy bơm đã được TẮT.");
                 } catch (Exception e) {
-                    sendTelegramMessage("❌ Không thể tắt máy bơm: " + e.getMessage());
+                    sendTelegramMessage(replyChatId, "❌ Không thể tắt máy bơm: " + e.getMessage());
                 }
                 break;
             case "/pump_status":
@@ -223,20 +249,20 @@ public class RemindService {
                 System.out.println("📊 Executing /pump_status (/pumpStatus) command");
                 try {
                     boolean isOn = pumpService.getStatus();
-                    sendTelegramMessage("📊 Trạng thái máy bơm hiện tại: " + (isOn ? "🟢 ĐANG BẬT" : "🔴 ĐANG TẮT"));
+                    sendTelegramMessage(replyChatId, "📊 Trạng thái máy bơm hiện tại: " + (isOn ? "🟢 ĐANG BẬT" : "🔴 ĐANG TẮT"));
                 } catch (Exception e) {
-                    sendTelegramMessage("❌ Không thể lấy trạng thái máy bơm: " + e.getMessage());
+                    sendTelegramMessage(replyChatId, "❌ Không thể lấy trạng thái máy bơm: " + e.getMessage());
                 }
                 break;
             default:
                 System.out.println("❓ Unknown command: '" + command + "'");
-                sendTelegramMessage("❓ Lệnh không hợp lệ: " + command + "\nGõ /help để xem danh sách lệnh.");
+                sendTelegramMessage(replyChatId, "❓ Lệnh không hợp lệ: " + command + "\nGõ /help để xem danh sách lệnh.");
                 break;
         }
     }
 
-    private void sendReminder() {
-        System.out.println("[" + LocalDateTime.now() + "] Starting sendReminder()");
+    private void sendReminder(String replyChatId) {
+        System.out.println("[" + LocalDateTime.now() + "] Starting sendReminder() -> reply to: " + replyChatId);
         LocalDate today = LocalDate.now();
         
         // ✅ Đúng rồi - không có filter, lấy tất cả
@@ -260,7 +286,7 @@ public class RemindService {
             
             if (notionRes.statusCode() >= 300) {
                 System.err.println("❌ Notion error: " + notionRes.statusCode() + " " + notionRes.body());
-                sendTelegramMessage("❌ Lỗi kết nối Notion: " + notionRes.statusCode());
+                sendTelegramMessage(replyChatId, "❌ Lỗi kết nối Notion: " + notionRes.statusCode());
                 return;
             }
 
@@ -305,20 +331,26 @@ public class RemindService {
                 message = sb.toString();
             }
 
-            sendTelegramMessage(message);
+            sendTelegramMessage(replyChatId, message);
 
         } catch (Exception e) {
             System.err.println("[" + LocalDateTime.now() + "] Reminder error: " + e.getMessage());
             e.printStackTrace();
-            sendTelegramMessage("❌ Có lỗi xảy ra: " + e.getMessage());
+            sendTelegramMessage(replyChatId, "❌ Có lỗi xảy ra: " + e.getMessage());
         }
     }
     
+    // Gửi về private chat mặc định (dùng cho scheduled job)
     private void sendTelegramMessage(String message) {
-        System.out.println("📤 [" + LocalDateTime.now() + "] Sending message to Telegram...");
+        sendTelegramMessage(telegramChatId, message);
+    }
+
+    // Gửi về chat bất kỳ (group hoặc private)
+    private void sendTelegramMessage(String targetChatId, String message) {
+        System.out.println("📤 [" + LocalDateTime.now() + "] Sending message to chat: " + targetChatId);
         try {
             String telegramUrl = "https://api.telegram.org/bot" + telegramToken + "/sendMessage";
-            String bodyJson = "{\"chat_id\":\"" + telegramChatId + "\",\"text\":\"" + escape(message) + "\"}";
+            String bodyJson = "{\"chat_id\":\"" + targetChatId + "\",\"text\":\"" + escape(message) + "\"}";
             
             HttpRequest tgReq = HttpRequest.newBuilder()
                     .uri(URI.create(telegramUrl))
@@ -330,7 +362,7 @@ public class RemindService {
             if (tgRes.statusCode() >= 300) {
                 System.err.println("Telegram error: " + tgRes.statusCode() + " " + tgRes.body());
             } else {
-                System.out.println("✅ [" + LocalDateTime.now() + "] Message sent successfully to Telegram!");
+                System.out.println("✅ [" + LocalDateTime.now() + "] Message sent to " + targetChatId + " successfully!");
             }
         } catch (Exception e) {
             System.err.println("[" + LocalDateTime.now() + "] Error sending telegram message: " + e.getMessage());

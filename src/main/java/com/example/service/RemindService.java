@@ -16,6 +16,7 @@ import java.util.List;
 import jakarta.annotation.PostConstruct; // Thay vì javax.annotation.PostConstruct
 
 import java.util.ArrayList;
+import java.util.TimeZone;
 
 @Singleton
 public class RemindService {
@@ -23,18 +24,19 @@ public class RemindService {
     private final ObjectMapper mapper = new ObjectMapper();
     private final PumpService pumpService;
     private String botUserName = null;
-    
+
     // Hardcode values thay vì System.getenv()
     private final String notionToken = "ntn_Y39296702863DRjCjOBCg18Ox9MVSuqSMEZ4PLPWX8Y3Hi";
     private final String databaseId = "2900ea3a028e8054abb5f520e01f89fe";
     private final String telegramToken = "7500392061:AAHA5S6h69-XJ9FTWIOUnLMqINRhKy7FBWk";
     private final String telegramChatId = "890385679";
     private final String telegramGroupChatId = "-5217583521"; // Group chat ID
-    
+
     private long lastUpdateId = 0; // Lưu ID của update cuối cùng
 
     // Constructor để log khi bean được tạo
     public RemindService(PumpService pumpService) {
+        TimeZone.setDefault(TimeZone.getTimeZone("Asia/Ho_Chi_Minh"));
         this.pumpService = pumpService;
         System.out.println("🚀 RemindService bean created at: " + LocalDateTime.now() + (pumpService != null ? " with PumpService" : " WITHOUT PumpService (Firebase unavailable)"));
         System.out.println("📱 Chat ID: " + telegramChatId);
